@@ -59,7 +59,7 @@ metodo che inserisce tutti quei studenti inseriti nell'exel in quell'anno
         while (iterator.hasNext()){
             Row row = iterator.next();
             if(row.getCell(1)==null){
-                break;
+                breakAA;
             }
             double matr= row.getCell(1).getNumericCellValue();
             String m = String.valueOf(matr).replaceAll("[0]*$", "").replaceAll(".$", "");
