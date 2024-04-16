@@ -35,6 +35,8 @@ public class RisultatiAtt {
         this.universitarii.add(universitario);
     }
 
+    public void addUniversitari(List<Universitario> univ){this.universitarii.addAll(univ);}
+
     public String getAttivita() {
         return attivita;
     }

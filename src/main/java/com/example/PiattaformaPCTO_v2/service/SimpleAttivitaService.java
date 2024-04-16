@@ -2,9 +2,7 @@ package com.example.PiattaformaPCTO_v2.service;
 
 import com.example.PiattaformaPCTO_v2.collection.*;
 import com.example.PiattaformaPCTO_v2.dto.ActivityViewDTOPair;
-import com.example.PiattaformaPCTO_v2.repository.AttivitaRepository;
-import com.example.PiattaformaPCTO_v2.repository.ScuolaRepository;
-import com.example.PiattaformaPCTO_v2.repository.UniversitarioRepository;
+import com.example.PiattaformaPCTO_v2.repository.*;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
@@ -44,9 +42,10 @@ public class SimpleAttivitaService implements AttivitaService {
     private UniversitarioService universitarioService;
     @Autowired
     private MongoTemplate mongoTemplate;
-
-
-
+    @Autowired
+    private RisultatiAttRepository risAttRepository;
+    @Autowired
+    private IscrizioniRepository iscrizioniRepository;
     @Override
     public String save(Attivita attivita) {
         return attivitaRepository.save(attivita).getNome();
@@ -113,11 +112,47 @@ public class SimpleAttivitaService implements AttivitaService {
             Studente stud = new Studente(id, nome, cognome, scuola);
             attivita.getStudPartecipanti().add(stud);
         }
-System.out.println("ciao");
+
         if(!att.isEmpty())this.addElement(attivita,att.get(0));
         else {
             System.out.println(this.save(attivita));
+            this.createRisulAtt(attivita,anno);
         }
+    }
+
+    /**
+     * metodo che crea il risultato att
+     * @param attivita
+     */
+    private void createRisulAtt(Attivita attivita,int anno){
+
+        RisultatiAtt risultatiAtt=new RisultatiAtt();
+        risultatiAtt.setAttivita(attivita.getNome());
+        risultatiAtt.setAnnoAcc(attivita.getAnnoAcc());
+        risultatiAtt.addUniversitari(this.checkUniversitario(attivita.getStudPartecipanti(),anno));
+        this.risAttRepository.save(risultatiAtt);
+    }
+
+
+    /**
+     *
+     * metodo che data una lista di studenti partecipanti a quell'attività ritorna la lista degli studenti che sono
+     * diventati studenti universitari
+     * @param stud
+     * @return
+     */
+
+    private List<Universitario> checkUniversitario(List<Studente> stud,int anno) {
+        List<Universitario> universitari=new ArrayList<>();
+
+
+    for(int i=0;i<stud.size();i++){
+        universitari.add(universitarioRepository.findByNomeAndCognome(stud.get(i).getNome(),stud.get(i).getCognome()));
+    }
+
+        System.out.println(universitari.size());
+
+        return universitari;
     }
 
     /**

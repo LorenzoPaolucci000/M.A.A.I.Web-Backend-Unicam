@@ -42,6 +42,7 @@ public class SimpleUniversitarioService implements UniversitarioService {
     public String save(Universitario universitario) {
         return universitarioRepository.save(universitario).getNome();
     }
+
 /**
 metodo che inserisce tutti quei studenti inseriti nell'exel in quell'anno
 
@@ -59,7 +60,7 @@ metodo che inserisce tutti quei studenti inseriti nell'exel in quell'anno
         while (iterator.hasNext()){
             Row row = iterator.next();
             if(row.getCell(1)==null){
-                breakAA;
+                break;
             }
             double matr= row.getCell(1).getNumericCellValue();
             String m = String.valueOf(matr).replaceAll("[0]*$", "").replaceAll(".$", "");
@@ -71,6 +72,7 @@ metodo che inserisce tutti quei studenti inseriti nell'exel in quell'anno
                 String corso = row.getCell(0).getStringCellValue();
                 Corso=corso;
                 Universitario universitario = new Universitario(m,nome,cognome,anno,corso,comune,scuola);
+                universitarioRepository.save(universitario);
                 i.addUniversitario(universitario);
             }
         }

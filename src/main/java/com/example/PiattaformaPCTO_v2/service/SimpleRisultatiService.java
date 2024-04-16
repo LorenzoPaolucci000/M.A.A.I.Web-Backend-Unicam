@@ -145,6 +145,8 @@ public class SimpleRisultatiService implements RisultatiService {
 
     @Override
     public List<RisultatiAtt> getRisultatiAtt() {
+        System.out.println(this.risultatiAttRepository.findAll().size());
+
         return this.risultatiAttRepository.findAll();
     }
 
@@ -159,6 +161,7 @@ public class SimpleRisultatiService implements RisultatiService {
     public List<Risultati> getRisultatiAnno(int anno) {
         Query query = new Query();
         query.addCriteria(Criteria.where("annoAcc").is(anno));
+
         return this.mongoTemplate.find(query,Risultati.class);
     }
 
