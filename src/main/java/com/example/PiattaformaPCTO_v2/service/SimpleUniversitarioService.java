@@ -1,5 +1,6 @@
 package com.example.PiattaformaPCTO_v2.service;
 
+import com.example.PiattaformaPCTO_v2.collection.Attivita;
 import com.example.PiattaformaPCTO_v2.collection.Iscrizioni;
 import com.example.PiattaformaPCTO_v2.collection.Universitario;
 import com.example.PiattaformaPCTO_v2.repository.IscrizioniRepository;
@@ -46,7 +47,7 @@ public class SimpleUniversitarioService implements UniversitarioService {
 /**
 metodo che inserisce tutti quei studenti inseriti nell'exel in quell'anno
 
- N.B: Ancora non collegato nel frontend
+
  */
 
 @Override
@@ -72,8 +73,11 @@ metodo che inserisce tutti quei studenti inseriti nell'exel in quell'anno
                 String corso = row.getCell(0).getStringCellValue();
                 Corso=corso;
                 Universitario universitario = new Universitario(m,nome,cognome,anno,corso,comune,scuola);
-                universitarioRepository.save(universitario);
-                i.addUniversitario(universitario);
+
+                if(universitarioRepository.findByMatricola( universitario.getMatricola())==null) {
+                    universitarioRepository.save(universitario);
+                    i.addUniversitario(universitario);
+                }
             }
         }
 
@@ -113,6 +117,26 @@ return null;
         iscrizioniList.add(i2);
         this.iscrizioniRepository.saveAll(iscrizioniList);
 }
+
+    /**
+     * metodo che controlla se gli universitari sono gia presenti come studenti tra le attività
+     */
+    private Map<Universitario,String> checkUniversitari(List<Universitario> universitari ){
+        Map<Universitario,String> mapping=new HashMap<>();
+        for(int i=0;i<universitari.size();i++){
+            Query query=new Query();
+query.addCriteria(Criteria.where("studPartecipanti.nome").is(universitari.get(i).getNome()).
+        and("studPartecipanti.cognome").is(universitari.get(i).getCognome()));
+if(!mongoTemplate.find(query, Attivita.class).isEmpty()) {
+    mapping.put(universitari.get(i), mongoTemplate.find(query, Attivita.class).get(0).getNome());
+}
+
+        }
+return mapping;
+    }
+
+
+
 
 
     @Override

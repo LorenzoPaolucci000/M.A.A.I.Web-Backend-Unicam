@@ -18,10 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -54,6 +51,70 @@ public class SimpleProfessoreService implements ProfessoreService{
         message+="</table>";
         return message;
     }
+
+    @Override
+    public void createEmptyActivity(String nome, int anno, String nomeScuola, String cittaScuola) {
+        // Crea un nuovo workbook Excel
+        Workbook workbook = new XSSFWorkbook();
+        // Crea un foglio di lavoro
+        Sheet sheet = workbook.createSheet("Sheet1");
+        // Percorso della cartella delle risorse
+        String resourcesPath = "src/main/resources/";
+        // Percorso completo della cartella "activity" nelle risorse
+        String activityFolderPath = resourcesPath + "activity/";
+        // Nome del file Excel
+        String filename = nome+anno+".xlsx";
+        // Percorso completo del file Excel
+        String filePath = activityFolderPath + filename;
+        // Assicurati che la cartella "activity" esista, altrimenti creala
+        File activityFolder = new File(activityFolderPath);
+        if (!activityFolder.exists()) {
+            activityFolder.mkdirs();
+        }
+        try {
+            // Crea un file di output
+            FileOutputStream fileOut = new FileOutputStream(filePath);
+            // Scrivi il workbook su file
+            workbook.write(fileOut);
+            fileOut.close();
+            workbook.close();
+            insertScuolaOnFile(nomeScuola,cittaScuola,filePath);
+        } catch (IOException e) {
+            System.out.println("Si è verificato un errore durante la scrittura del file: " + e.getMessage());
+        }
+
+    }
+
+    /**
+     * metodo che inserisce la scuola e la città nella prima riga del file excel
+     */
+    private void insertScuolaOnFile(String scuola,String cittaScuola,String filePath){
+        Workbook workbook = new XSSFWorkbook();
+        // Crea un foglio di lavoro
+        Sheet sheet = workbook.createSheet("Sheet1");
+        // Crea la prima riga
+        Row row = sheet.createRow(0);
+        // Scrivi scuola nella prima colonna
+        Cell cell1 = row.createCell(0);
+        cell1.setCellValue(scuola);
+        // Scrivi città scuola nella seconda colonna
+        Cell cell2 = row.createCell(1);
+        cell2.setCellValue(cittaScuola);
+        try {
+            // Crea un file di output
+            FileOutputStream fileOut = new FileOutputStream(filePath);
+            // Scrivi il workbook su file
+            workbook.write(fileOut);
+            fileOut.close();
+            workbook.close();
+        } catch (IOException e) {
+            System.out.println("Si è verificato un errore durante la scrittura del file: " + e.getMessage());
+        }
+
+}
+
+
+
 
     @Override
     public void uploadConFile(MultipartFile file){
@@ -236,6 +297,8 @@ return professoreRepository.getProfessoreByNomeCognomeAttivita(nome,cognome,atti
 
         return "Caricati "+counter+" professori";
     }
+
+
 
     private String findSchoolId(String scuola,String citta){
         //converto tutto in maiuscolo

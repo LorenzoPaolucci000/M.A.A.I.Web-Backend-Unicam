@@ -15,5 +15,6 @@ public interface UniversitarioRepository extends MongoRepository<Universitario, 
 
     @Query("{'nome': ?0,'cognome': ?1}")
     Universitario findByNomeAndCognome(String nome, String cognome);
-
+    @Query("{'_id': ?0}")
+    Universitario findByMatricola(String matricola);
 }

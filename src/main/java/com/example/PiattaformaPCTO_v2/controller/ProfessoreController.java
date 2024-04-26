@@ -29,11 +29,15 @@ public class ProfessoreController {
     public String save(){
         return professoreService.upload();
     }
-
+/*
     @RequestMapping(value = "/uploadConFile", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void uploadConAnno(@RequestParam("file") MultipartFile file){
         professoreService.uploadConFile(file);
-    }
+    }*/
+    @RequestMapping(value="/createEmptyActivity")
+public void createEmptyActivity(@RequestParam("nome") String nome ,@RequestParam("anno") int anno,
+                          @RequestParam("scuola")String scuola,@RequestParam("cittaScuola")String cittaScuola)
+    {professoreService.createEmptyActivity(nome, anno, scuola, cittaScuola);}
     @PostMapping("/uploadConFile1")
     public void uploadConAnno1(@RequestParam("file") MultipartFile file){
         professoreService.uploadConFile(file);

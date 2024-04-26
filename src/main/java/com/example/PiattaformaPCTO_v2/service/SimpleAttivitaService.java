@@ -3,6 +3,9 @@ package com.example.PiattaformaPCTO_v2.service;
 import com.example.PiattaformaPCTO_v2.collection.*;
 import com.example.PiattaformaPCTO_v2.dto.ActivityViewDTOPair;
 import com.example.PiattaformaPCTO_v2.repository.*;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
@@ -10,8 +13,11 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
@@ -46,6 +52,8 @@ public class SimpleAttivitaService implements AttivitaService {
     private RisultatiAttRepository risAttRepository;
     @Autowired
     private IscrizioniRepository iscrizioniRepository;
+    @Autowired
+    private StudenteRepository studenteRepository;
     @Override
     public String save(Attivita attivita) {
         return attivitaRepository.save(attivita).getNome();
@@ -78,6 +86,7 @@ public class SimpleAttivitaService implements AttivitaService {
                         Studente stud = new Studente(id, nome, cognome, scuola);
                         System.out.println(stud);
                         attivita.getStudPartecipanti().add(stud);
+
                         System.out.println(attivita.getStudPartecipanti().size());
                     }
 
@@ -97,6 +106,7 @@ public class SimpleAttivitaService implements AttivitaService {
         Sheet dataSheet = this.fileOpenerHelper(file);
         List<String> citta = this.scuolaService.getCitta();
         Iterator<Row> iterator = dataSheet.rowIterator();
+         iterator.next();
         while(iterator.hasNext()){
             Row row = iterator.next();
             String c = row.getCell(3).getStringCellValue().toUpperCase();
@@ -111,13 +121,30 @@ public class SimpleAttivitaService implements AttivitaService {
             String id = nome + cognome + scuola.getNome();
             Studente stud = new Studente(id, nome, cognome, scuola);
             attivita.getStudPartecipanti().add(stud);
+            studenteRepository.save(stud);//aggiunto
+
         }
 
-        if(!att.isEmpty())this.addElement(attivita,att.get(0));
+        if(!att.isEmpty()) {
+            this.addElement(attivita, att.get(0));
+            this.updateRisulAtt(attivita,anno);
+        }
         else {
             System.out.println(this.save(attivita));
             this.createRisulAtt(attivita,anno);
         }
+    }
+
+    private void updateRisulAtt(Attivita attivita, int anno) {
+        List<RisultatiAtt> risatt=risAttRepository.findByNomeAndAnno(attivita.getNome(),anno);
+System.out.println(attivita.getNome());
+        List<RisultatiAtt> elencoris=risAttRepository.findAll();
+        elencoris.remove(risatt.get(0));
+       risAttRepository.deleteAll();
+    risatt.get(0).addUniversitari(this.checkUniversitario(attivita.getStudPartecipanti(),anno));
+    elencoris.add(risatt.get(0));
+    this.risAttRepository.saveAll(elencoris);
+
     }
 
     /**
@@ -145,12 +172,15 @@ public class SimpleAttivitaService implements AttivitaService {
     private List<Universitario> checkUniversitario(List<Studente> stud,int anno) {
         List<Universitario> universitari=new ArrayList<>();
 
-
+//Query query=new Query();
+//query.addCriteria(Criteria.where("universitari.nome").is("ALBERTO").and("universitari.cognome").is("POL"));
+//System.out.println( mongoTemplate.find(query, Iscrizione.class));
     for(int i=0;i<stud.size();i++){
+
         universitari.add(universitarioRepository.findByNomeAndCognome(stud.get(i).getNome(),stud.get(i).getCognome()));
     }
 
-        System.out.println(universitari.size());
+
 
         return universitari;
     }
