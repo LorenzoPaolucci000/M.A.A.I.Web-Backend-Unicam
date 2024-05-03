@@ -15,10 +15,14 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -32,6 +36,8 @@ public class SimpleProfessoreService implements ProfessoreService{
     private ProfessoreRepository professoreRepository;
     @Autowired
     private ScuolaRepository scuolaRepository;
+    @Autowired
+    private AttivitaService attivitaService;
 
     @Override
     public String save(Professore professore) {
@@ -83,12 +89,47 @@ public class SimpleProfessoreService implements ProfessoreService{
             System.out.println("Si è verificato un errore durante la scrittura del file: " + e.getMessage());
         }
 
+
+
     }
+
+    @Override
+    public void uploadActivityDefinitively(String nome) throws IOException {
+        // Specifica il percorso del file
+        String percorsoFile = "src/main/resources/activity/"+nome+".xlsx";
+        int anno =Integer.parseInt( nome.substring(nome.length() - 4));
+
+        // Crea un oggetto File con il percorso specificato
+        File file = new File(percorsoFile);
+        FileInputStream input = new FileInputStream(file);
+        byte[] bytes = new byte[(int) file.length()];
+        input.read(bytes);
+        input.close();
+
+        // Crea il MultipartFile utilizzando MockMultipartFile
+        MultipartFile multipartFile = new MockMultipartFile("nomeFile", file.getName(), "text/plain", bytes);
+
+
+
+        if (file.exists()) {
+           attivitaService.uploadConAnno(multipartFile,anno,nome.substring(0,nome.length() - 4));
+            if (file.delete()) {
+                System.out.println("Il file è stato cancellato con successo.");
+            } else {
+                System.out.println("Impossibile cancellare il file.");
+            }
+
+        } else {
+            System.out.println("Il file non esiste.");
+        }
+    }
+
 
     /**
      * metodo che inserisce la scuola e la città nella prima riga del file excel
      */
     private void insertScuolaOnFile(String scuola,String cittaScuola,String filePath){
+
         Workbook workbook = new XSSFWorkbook();
         // Crea un foglio di lavoro
         Sheet sheet = workbook.createSheet("Sheet1");
@@ -143,6 +184,32 @@ public class SimpleProfessoreService implements ProfessoreService{
 
     }
 
+    @Override
+    public List<String> getAllPendingActivities() {
+
+
+        String packageName = "activity";
+        List<String> classNames = new ArrayList<>();
+        String packagePath = packageName.replace('.', '/');
+        File packageDirectory = new File(Thread.currentThread().getContextClassLoader().getResource(packagePath).getFile());
+
+        if (packageDirectory.exists() && packageDirectory.isDirectory()) {
+            File[] files = packageDirectory.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isFile()) {
+                        String fileName = file.getName();
+                        if (fileName.endsWith(".xlsx")) {
+                            String className = fileName.substring(0, fileName.lastIndexOf('.'));
+                            classNames.add(className);
+                        }
+                    }
+                }
+            }
+
+        }
+        return classNames;
+    }
     /**
      * metodo che controlla se lo stesso professore fa già la stessa attivitò per evitare duplicati
      * @return true se fa la stessa attività
