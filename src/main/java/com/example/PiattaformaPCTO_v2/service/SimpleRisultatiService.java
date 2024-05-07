@@ -3,6 +3,10 @@ package com.example.PiattaformaPCTO_v2.service;
 import com.example.PiattaformaPCTO_v2.collection.*;
 import com.example.PiattaformaPCTO_v2.dto.ActivityViewDTOPair;
 import com.example.PiattaformaPCTO_v2.repository.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +16,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
@@ -163,6 +168,72 @@ public class SimpleRisultatiService implements RisultatiService {
         query.addCriteria(Criteria.where("annoAcc").is(anno));
 
         return this.mongoTemplate.find(query,Risultati.class);
+    }
+
+    @Override
+    public void donloadResOnFile() {
+        // Crea un nuovo workbook Excel
+        Workbook workbook = new XSSFWorkbook();
+        // Crea un foglio di lavoro
+        Sheet sheet = workbook.createSheet("Sheet1");
+        // Percorso della cartella delle risorse
+        String resourcesPath = "src/main/resources/";
+        // Percorso completo della cartella "activity" nelle risorse
+        String activityFolderPath = resourcesPath + "activity/";
+        // Nome del file Excel
+        String filename = "risultati.xlsx";
+        // Percorso completo del file Excel
+        String filePath = activityFolderPath + filename;
+        // Assicurati che la cartella "activity" esista, altrimenti creala
+        File activityFolder = new File(activityFolderPath);
+        List<RisultatiAtt> risultati =risultatiAttRepository.findAll();
+        int j=0;
+
+        for (int i = 0; i< risultati.size(); i++) {
+            Row row = sheet.createRow(j);
+            Cell cellAtt = row.createCell(0);
+            Cell cellAnno = row.createCell(1);
+            // Impostazione dei valori delle celle
+            cellAtt.setCellValue(risultati.get(i).getAttivita());
+            cellAnno.setCellValue(risultati.get(i).getAnnoAcc());
+            // Creazione della prima riga
+
+            for(int p=0;p<risultati.get(i).getUniversitarii().size();p++) {
+                Universitario universitario = risultati.get(i).getUniversitarii().get(p);
+                j++;
+                Row row1 = sheet.createRow(j);
+                Cell cellMatricola = row1.createCell(0);
+                Cell cellNome = row1.createCell(1);
+                Cell cellCognome = row1.createCell(2);
+                Cell cellannoImm = row1.createCell(3);
+                Cell cellCorso = row1.createCell(4);
+                Cell cellcomuneScuola = row1.createCell(5);
+                Cell cellscuolaProv = row1.createCell(6);
+
+                cellMatricola.setCellValue(universitario.getMatricola());
+                cellNome.setCellValue(universitario.getNome());
+                cellCognome.setCellValue(universitario.getCognome());
+                cellannoImm.setCellValue(universitario.getAnnoImm());
+                cellCorso.setCellValue(universitario.getCorso());
+                cellcomuneScuola.setCellValue(universitario.getComuneScuola());
+                cellscuolaProv.setCellValue(universitario.getScuolaProv());
+            }
+
+        }
+
+        try (FileOutputStream outputStream = new FileOutputStream(filename)) {
+            workbook.write(outputStream);
+            System.out.println("File Excel creato con successo!");
+        } catch (IOException e) {
+            System.err.println("Errore durante la creazione del file Excel: " + e.getMessage());
+        } finally {
+            // Chiusura del workbook
+            try {
+                workbook.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }j++;
     }
 
     @Override

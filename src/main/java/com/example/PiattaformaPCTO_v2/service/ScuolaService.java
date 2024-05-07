@@ -19,5 +19,8 @@ public interface ScuolaService {
     List<String> getCitta();
 
     List<String> getNomi(String c);
-
+/**
+ * metodo che carica in un file tutte le scuole
+ */
+void downloadAllSchhool();
 }

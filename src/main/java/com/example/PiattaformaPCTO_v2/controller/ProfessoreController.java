@@ -48,6 +48,13 @@ public void createEmptyActivity(@RequestParam("nome") String nome ,@RequestParam
         professoreService.createEmptyActivity(create.getNome(), create.getAnno(), create.getNomeScuola(), create.getCittaScuola());}
 
 
+    /**
+     * chiamato al metodo che invoca il download dei professori in formatao excel
+     */
+    @GetMapping("/downloadFile")
+public void getProfessoriInFile(){
+professoreService.downloadAllProfOnFile();
+}
 
 
 

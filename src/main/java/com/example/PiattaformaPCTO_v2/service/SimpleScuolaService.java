@@ -2,18 +2,19 @@ package com.example.PiattaformaPCTO_v2.service;
 
 import com.example.PiattaformaPCTO_v2.collection.Scuola;
 import com.example.PiattaformaPCTO_v2.repository.ScuolaRepository;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.function.EntityResponse;
 
 
 import java.io.File;
 import java.io.FileInputStream;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -100,6 +101,57 @@ public class SimpleScuolaService implements ScuolaService{
             nomi.add(s.getNome());
         }
         return nomi;
+    }
+
+    @Override
+    public void downloadAllSchhool() {
+        // Crea un nuovo workbook Excel
+        Workbook workbook = new XSSFWorkbook();
+        // Crea un foglio di lavoro
+        Sheet sheet = workbook.createSheet("Sheet1");
+        // Percorso della cartella delle risorse
+        String resourcesPath = "src/main/resources/";
+        // Percorso completo della cartella "activity" nelle risorse
+        String activityFolderPath = resourcesPath + "activity/";
+        // Nome del file Excel
+        String filename = "scuole.xlsx";
+        // Percorso completo del file Excel
+        String filePath = activityFolderPath + filename;
+        // Assicurati che la cartella "activity" esista, altrimenti creala
+        File activityFolder = new File(activityFolderPath);
+        List<Scuola> scuole =scuolaRepository.findAll();
+        for (int i = 0; i< scuole.size(); i++) {
+            // Creazione della prima riga
+            Row row = sheet.createRow(i);
+            Cell cellId = row.createCell(0);
+            Cell cellNome = row.createCell(1);
+            Cell cellRegione = row.createCell(2);
+            Cell cellProvincia = row.createCell(3);
+            Cell cellCitta = row.createCell(4);
+            Cell cellTipo = row.createCell(5);
+            // Impostazione dei valori delle celle
+            cellId.setCellValue(scuole.get(i).getIdScuola());
+            cellNome.setCellValue(scuole.get(i).getNome());
+            cellRegione.setCellValue(scuole.get(i).getRegione());
+            cellProvincia.setCellValue(scuole.get(i).getProvincia());
+            cellCitta.setCellValue(scuole.get(i).getCitta());
+            cellTipo.setCellValue(scuole.get(i).getTipo());
+        }
+
+        try (FileOutputStream outputStream = new FileOutputStream(filename)) {
+            workbook.write(outputStream);
+            System.out.println("File Excel creato con successo!");
+        } catch (IOException e) {
+            System.err.println("Errore durante la creazione del file Excel: " + e.getMessage());
+        } finally {
+            // Chiusura del workbook
+            try {
+                workbook.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
 

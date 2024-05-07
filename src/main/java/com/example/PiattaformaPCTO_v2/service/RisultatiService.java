@@ -21,4 +21,10 @@ public interface RisultatiService {
     Risultati stampa();
 
     List<Risultati> getRisultatiAnno(int anno);
+
+    /**
+     * metodo che mette tutti i risultati delle attività sul file
+     */
+    void donloadResOnFile();
+
 }

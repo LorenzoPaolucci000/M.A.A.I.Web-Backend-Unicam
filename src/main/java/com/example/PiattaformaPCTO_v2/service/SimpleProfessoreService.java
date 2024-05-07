@@ -210,6 +210,57 @@ public class SimpleProfessoreService implements ProfessoreService{
         }
         return classNames;
     }
+
+    @Override
+    public void downloadAllProfOnFile() {
+        // Crea un nuovo workbook Excel
+        Workbook workbook = new XSSFWorkbook();
+        // Crea un foglio di lavoro
+        Sheet sheet = workbook.createSheet("Sheet1");
+        // Percorso della cartella delle risorse
+        String resourcesPath = "src/main/resources/";
+        // Percorso completo della cartella "activity" nelle risorse
+        String activityFolderPath = resourcesPath + "activity/";
+        // Nome del file Excel
+        String filename = "professori.xlsx";
+        // Percorso completo del file Excel
+        String filePath = activityFolderPath + filename;
+        // Assicurati che la cartella "activity" esista, altrimenti creala
+        File activityFolder = new File(activityFolderPath);
+        List<Professore> professori=professoreRepository.findAll();
+        for (int i=0;i< professori.size();i++) {
+            // Creazione della prima riga
+            Row row = sheet.createRow(i);
+            Cell cellEmail = row.createCell(0);
+            Cell cellNome = row.createCell(1);
+            Cell cellCognome = row.createCell(2);
+            Cell cellScuola = row.createCell(3);
+            Cell cellAttivita = row.createCell(4);
+            // Impostazione dei valori delle celle
+            cellEmail.setCellValue(professori.get(i).getEmail());
+            cellNome.setCellValue(professori.get(i).getNome());
+            cellCognome.setCellValue(professori.get(i).getCognome());
+            cellScuola.setCellValue(professori.get(i).getScuolaImp());
+            cellAttivita.setCellValue(professori.get(i).getAttivita());
+        }
+
+        try (FileOutputStream outputStream = new FileOutputStream(filename)) {
+            workbook.write(outputStream);
+            System.out.println("File Excel creato con successo!");
+        } catch (IOException e) {
+            System.err.println("Errore durante la creazione del file Excel: " + e.getMessage());
+        } finally {
+            // Chiusura del workbook
+            try {
+                workbook.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+    }
+
     /**
      * metodo che controlla se lo stesso professore fa già la stessa attivitò per evitare duplicati
      * @return true se fa la stessa attività

@@ -39,7 +39,10 @@ public interface ProfessoreService {
      */
     List<String> getAllPendingActivities();
 
-
+    /**
+     * metodo che scarica un file excel in cui mette tutti i prof presenti
+     */
+    void downloadAllProfOnFile();
 
 
     String stampa();

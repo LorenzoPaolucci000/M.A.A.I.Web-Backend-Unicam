@@ -27,8 +27,13 @@ public class RisultatiController {
         this.risultatiService.createStudentsFromActivities();
     }
 
-
-
+    /**
+     * metodo che mette in un file i risulatati
+     */
+    @GetMapping("/downloadFile")
+public void downloadAllResOnFile(){
+  risultatiService.donloadResOnFile();
+}
 
     @GetMapping("/res")
     public ResponseEntity<List<Risultati>> getRisultati(){
