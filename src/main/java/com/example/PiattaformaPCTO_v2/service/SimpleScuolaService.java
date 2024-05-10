@@ -104,7 +104,7 @@ public class SimpleScuolaService implements ScuolaService{
     }
 
     @Override
-    public void downloadAllSchhool() {
+    public void downloadAllSchhool(String filename) {
         // Crea un nuovo workbook Excel
         Workbook workbook = new XSSFWorkbook();
         // Crea un foglio di lavoro
@@ -114,7 +114,7 @@ public class SimpleScuolaService implements ScuolaService{
         // Percorso completo della cartella "activity" nelle risorse
         String activityFolderPath = resourcesPath + "activity/";
         // Nome del file Excel
-        String filename = "scuole.xlsx";
+
         // Percorso completo del file Excel
         String filePath = activityFolderPath + filename;
         // Assicurati che la cartella "activity" esista, altrimenti creala

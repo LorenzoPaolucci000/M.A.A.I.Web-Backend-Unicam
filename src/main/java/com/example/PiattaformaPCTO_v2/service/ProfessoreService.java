@@ -42,7 +42,7 @@ public interface ProfessoreService {
     /**
      * metodo che scarica un file excel in cui mette tutti i prof presenti
      */
-    void downloadAllProfOnFile();
+    void downloadAllProfOnFile(String filename);
 
 
     String stampa();

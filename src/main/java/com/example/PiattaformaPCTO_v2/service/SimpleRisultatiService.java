@@ -100,7 +100,7 @@ public class SimpleRisultatiService implements RisultatiService {
                     String citta= studi.getScuola().getCitta().toUpperCase();
                     List<Iscrizioni> i = this.universitarioService.getIscrizioniAnno(4047);
                     Iscrizioni is= i.get(0);
-                    System.out.println("qua");
+
                     for (Universitario u : is.getUniversitari()){
                         if(u.getNome().equals(nome)){
                             if (u.getCognome().equals(cognome)){
@@ -126,7 +126,7 @@ public class SimpleRisultatiService implements RisultatiService {
     public void createStudentsFromActivities() {
         Map<Attivita, List<ActivityViewDTOPair>> result = new HashMap<>();
         List<Attivita> activities = this.attivitaService.getAttivita(4047);
-        System.out.println(activities.size());
+
         List<RisultatiAtt> res = new ArrayList<>();
         activities.forEach(a -> result.put(a, attivitaService.findStudentsFromActivity(a.getNome())));
         result.entrySet().forEach(e -> {
@@ -150,7 +150,7 @@ public class SimpleRisultatiService implements RisultatiService {
 
     @Override
     public List<RisultatiAtt> getRisultatiAtt() {
-        System.out.println(this.risultatiAttRepository.findAll().size());
+       // System.out.println(this.risultatiAttRepository.findAll().size());
 
         return this.risultatiAttRepository.findAll();
     }
@@ -171,7 +171,7 @@ public class SimpleRisultatiService implements RisultatiService {
     }
 
     @Override
-    public void donloadResOnFile() {
+    public void donloadResOnFile(String filename) {
         // Crea un nuovo workbook Excel
         Workbook workbook = new XSSFWorkbook();
         // Crea un foglio di lavoro
@@ -181,7 +181,7 @@ public class SimpleRisultatiService implements RisultatiService {
         // Percorso completo della cartella "activity" nelle risorse
         String activityFolderPath = resourcesPath + "activity/";
         // Nome del file Excel
-        String filename = "risultati.xlsx";
+
         // Percorso completo del file Excel
         String filePath = activityFolderPath + filename;
         // Assicurati che la cartella "activity" esista, altrimenti creala
@@ -249,7 +249,7 @@ public class SimpleRisultatiService implements RisultatiService {
                     for (Universitario u :i.get(0).getUniversitari()){
                         if (u.getNome().equals(s.getNome().toUpperCase())){
                             if (u.getCognome().equals(s.getCognome().toUpperCase())){
-                                System.out.println(u);
+
                                 Scuola scuola = findScuola(u.getComuneScuola(), u.getScuolaProv());
                                 s.setScuola(scuola);
                                 System.out.println("sono nel metodo brutto"+s.getScuola());

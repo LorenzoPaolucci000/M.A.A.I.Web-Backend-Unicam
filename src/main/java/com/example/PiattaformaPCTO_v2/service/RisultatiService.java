@@ -25,6 +25,6 @@ public interface RisultatiService {
     /**
      * metodo che mette tutti i risultati delle attività sul file
      */
-    void donloadResOnFile();
+    void donloadResOnFile(String name);
 
 }

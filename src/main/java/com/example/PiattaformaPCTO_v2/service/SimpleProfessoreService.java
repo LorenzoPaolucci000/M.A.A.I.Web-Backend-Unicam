@@ -212,7 +212,8 @@ public class SimpleProfessoreService implements ProfessoreService{
     }
 
     @Override
-    public void downloadAllProfOnFile() {
+    public void downloadAllProfOnFile(String filename) {
+
         // Crea un nuovo workbook Excel
         Workbook workbook = new XSSFWorkbook();
         // Crea un foglio di lavoro
@@ -222,7 +223,7 @@ public class SimpleProfessoreService implements ProfessoreService{
         // Percorso completo della cartella "activity" nelle risorse
         String activityFolderPath = resourcesPath + "activity/";
         // Nome del file Excel
-        String filename = "professori.xlsx";
+
         // Percorso completo del file Excel
         String filePath = activityFolderPath + filename;
         // Assicurati che la cartella "activity" esista, altrimenti creala
