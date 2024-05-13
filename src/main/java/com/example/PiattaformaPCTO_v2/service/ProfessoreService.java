@@ -2,6 +2,7 @@ package com.example.PiattaformaPCTO_v2.service;
 
 import com.example.PiattaformaPCTO_v2.collection.Professore;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
@@ -49,4 +50,9 @@ public interface ProfessoreService {
 
     List<Professore> getAllProf();
     Sheet fileOpenerHelper(MultipartFile file);
+
+    /**
+     * metodo che si occupa di  scaricare  il file precedentemente creato
+     */
+    ResponseEntity<Object> downloadFile(String name)throws FileNotFoundException;
 }

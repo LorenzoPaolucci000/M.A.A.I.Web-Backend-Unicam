@@ -10,15 +10,17 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 @Service
@@ -197,7 +199,6 @@ public class SimpleRisultatiService implements RisultatiService {
             cellAtt.setCellValue(risultati.get(i).getAttivita());
             cellAnno.setCellValue(risultati.get(i).getAnnoAcc());
             // Creazione della prima riga
-
             for(int p=0;p<risultati.get(i).getUniversitarii().size();p++) {
                 Universitario universitario = risultati.get(i).getUniversitarii().get(p);
                 j++;
@@ -218,7 +219,6 @@ public class SimpleRisultatiService implements RisultatiService {
                 cellcomuneScuola.setCellValue(universitario.getComuneScuola());
                 cellscuolaProv.setCellValue(universitario.getScuolaProv());
             }
-
         }
 
         try (FileOutputStream outputStream = new FileOutputStream(filename)) {
@@ -233,8 +233,63 @@ public class SimpleRisultatiService implements RisultatiService {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }j++;
+        }
     }
+
+    public ResponseEntity<Object>  downloadFile(String name) throws FileNotFoundException {
+        // Percorso del file sul tuo sistema
+        String filePath = "C:/Users/user/IdeaProjects/PiattaformaPCTO-master-master/"+name; // Modifica il percorso del file
+
+        // Creazione di un oggetto File con il percorso specificato
+        File file = new File(filePath);
+
+        // Controllo se il file esiste
+        if (!file.exists()) {
+            return ResponseEntity.notFound().build(); // File non trovato, restituisce una risposta 404
+        }
+
+        // Creazione di un oggetto InputStreamResource per avvolgere il file
+        InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+
+        // Costruzione delle intestazioni della risposta HTTP
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + file.getName()); // Specifica il nome del file nel Content-Disposition
+        headers.add(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate");
+        headers.add(HttpHeaders.PRAGMA, "no-cache");
+        headers.add(HttpHeaders.EXPIRES, "0");
+        this.deleteFile(filePath);
+        // Costruzione della risposta HTTP con il file scaricabile
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(file.length()) // Imposta la lunghezza del contenuto nel corpo della risposta
+                .contentType(MediaType.parseMediaType("application/octet-stream")) // Imposta il tipo MIME del contenuto
+                .body(resource); // Imposta il corpo della risposta con il file
+
+    }
+
+    /**
+     * metodo che si occupa di eliminare il file precedentemenete creato nel filesystemdopo 3 secondi dal download
+     * @param filePath nome del file
+     */
+    private  void deleteFile(String filePath) {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                File file = new File(filePath);
+                if (file.exists()) {
+                    if (file.delete()) {
+                        System.out.println("Il file è stato eliminato con successo: " + filePath);
+                    } else {
+                        System.out.println("Impossibile eliminare il file: " + filePath);
+                    }
+                } else {
+                    System.out.println("Il file non esiste: " + filePath);
+                }
+            }
+        }, 3000);
+    }
+
 
     @Override
     public void risultatiInf(List<Attivita> attivita, List<Risultati> r) {
