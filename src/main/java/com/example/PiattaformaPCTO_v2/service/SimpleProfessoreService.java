@@ -233,9 +233,15 @@ public class SimpleProfessoreService implements ProfessoreService{
         // Assicurati che la cartella "activity" esista, altrimenti creala
         File activityFolder = new File(activityFolderPath);
         List<Professore> professori=professoreRepository.findAll();
+        Row row0 = sheet.createRow(0);
+        row0.createCell(0).setCellValue("Email");
+        row0.createCell(1).setCellValue("Nome");
+        row0.createCell(2).setCellValue("Cognome");
+        row0.createCell(3).setCellValue("Scuola");
+        row0.createCell(4).setCellValue("Attività");
         for (int i=0;i< professori.size();i++) {
             // Creazione della prima riga
-            Row row = sheet.createRow(i);
+            Row row = sheet.createRow(i+1);
             Cell cellEmail = row.createCell(0);
             Cell cellNome = row.createCell(1);
             Cell cellCognome = row.createCell(2);

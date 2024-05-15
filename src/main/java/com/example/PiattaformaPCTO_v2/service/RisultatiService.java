@@ -27,7 +27,7 @@ public interface RisultatiService {
     /**
      * metodo che mette tutti i risultati delle attività sul file
      */
-    void donloadResOnFile(String name);
+    void donloadResOnFile(String name,int anno);
 
     /**
      * metodo che si occupa di  scaricare  il file precedentemente creato

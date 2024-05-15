@@ -173,7 +173,7 @@ public class SimpleRisultatiService implements RisultatiService {
     }
 
     @Override
-    public void donloadResOnFile(String filename) {
+    public void donloadResOnFile(String filename,int anno) {
         // Crea un nuovo workbook Excel
         Workbook workbook = new XSSFWorkbook();
         // Crea un foglio di lavoro
@@ -188,19 +188,39 @@ public class SimpleRisultatiService implements RisultatiService {
         String filePath = activityFolderPath + filename;
         // Assicurati che la cartella "activity" esista, altrimenti creala
         File activityFolder = new File(activityFolderPath);
-        List<RisultatiAtt> risultati =risultatiAttRepository.findAll();
+        List<RisultatiAtt> risultati;
+        if(anno==0){
+            risultati = risultatiAttRepository.findAll();}
+        else{
+             risultati = risultatiAttRepository.findbyAnno(anno);
+        }
         int j=0;
 
         for (int i = 0; i< risultati.size(); i++) {
+            Row row0 = sheet.createRow(j);
+            row0.createCell(0).setCellValue("Attività");
+            row0.createCell(1).setCellValue("Anno");
+            j++;
+
             Row row = sheet.createRow(j);
             Cell cellAtt = row.createCell(0);
             Cell cellAnno = row.createCell(1);
             // Impostazione dei valori delle celle
             cellAtt.setCellValue(risultati.get(i).getAttivita());
-            cellAnno.setCellValue(risultati.get(i).getAnnoAcc());
+            cellAnno.setCellValue(risultati.get(i).getAnnoAcc());j++;
             // Creazione della prima riga
+            Row row01 = sheet.createRow(j);
+            row01.createCell(0).setCellValue("Matricola");
+            row01.createCell(1).setCellValue("Nome");
+            row01.createCell(2).setCellValue("Cognome");
+            row01.createCell(3).setCellValue("AnnoImm");
+            row01.createCell(4).setCellValue("Corso");
+            row01.createCell(5).setCellValue("ComuneScuola");
+            row01.createCell(5).setCellValue("ProvinciaScuola");
             for(int p=0;p<risultati.get(i).getUniversitarii().size();p++) {
                 Universitario universitario = risultati.get(i).getUniversitarii().get(p);
+
+
                 j++;
                 Row row1 = sheet.createRow(j);
                 Cell cellMatricola = row1.createCell(0);
@@ -592,4 +612,6 @@ public class SimpleRisultatiService implements RisultatiService {
     }
 
 */
+
+
 }

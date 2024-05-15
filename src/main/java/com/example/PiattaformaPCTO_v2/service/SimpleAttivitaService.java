@@ -59,7 +59,7 @@ public class SimpleAttivitaService implements AttivitaService {
         return attivitaRepository.save(attivita).getNome();
     }
 
-    //file path
+
     @Override
     public void upload() {
         String filePath = "src/main/resources/Progetto-NERD-2021-2022.xlsx";
@@ -698,9 +698,7 @@ System.out.println(attivita.getNome());
                         }
                     }
                 }
-                /*Universitario u = this.universitarioRepository.findByNomeAndCognome(s.getNome().toUpperCase(),s.getCognome().toUpperCase());
-                if (u !=null)
-                    result.add(new ActivityViewDTOPair(u,this.findScuola(u.getComuneScuola(),u.getScuolaProv())));*/
+
             });
         }else {
             activity.getStudPartecipanti().forEach(s -> {
@@ -715,12 +713,7 @@ System.out.println(attivita.getNome());
                         }
                     }
                 }
-                /*Universitario u = this.universitarioRepository.findByNomeAndCognomeAndComuneScuola(
-                        s.getNome().toUpperCase(), s.getCognome().toUpperCase(), s.getScuola().getCitta().toUpperCase());
-                if (u != null) {
-                    result.add(new ActivityViewDTOPair(u, this.scuolaRepository.getScuolaByNomeContainingAndAndCitta(
-                            s.getScuola().getNome(), u.getComuneScuola())));
-                }*/
+
             });
         }
         return result;

@@ -56,10 +56,6 @@ public class ScuolaController {
 
 
 
-
-
-
-
     @GetMapping("/visua")
     public ResponseEntity<List<Scuola>> visualizza(){
         List<Scuola> s = this.scuolaService.getScuole();

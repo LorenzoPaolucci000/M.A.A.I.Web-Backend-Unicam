@@ -13,6 +13,6 @@ import java.util.List;
 public interface RisultatiAttRepository extends MongoRepository <RisultatiAtt,String> {
     @Query("{'attivita': ?0,'annoAcc': ?1}")
     List<RisultatiAtt> findByNomeAndAnno(String nome,int anno);
-
-
+    @Query("{'annoAcc': ?0}")
+    List<RisultatiAtt> findbyAnno(int anno);
 }

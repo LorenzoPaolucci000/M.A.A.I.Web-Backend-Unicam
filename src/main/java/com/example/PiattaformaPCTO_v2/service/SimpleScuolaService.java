@@ -1,6 +1,8 @@
 package com.example.PiattaformaPCTO_v2.service;
 
+import com.example.PiattaformaPCTO_v2.collection.Risultati;
 import com.example.PiattaformaPCTO_v2.collection.Scuola;
+import com.example.PiattaformaPCTO_v2.repository.RisultatiRepository;
 import com.example.PiattaformaPCTO_v2.repository.ScuolaRepository;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -30,7 +32,8 @@ public class SimpleScuolaService implements ScuolaService{
     public String save(Scuola scuola) {
         return scuolaRepository.save(scuola).getIdScuola();
     }
-
+    @Autowired
+    private RisultatiRepository risultatiRepository;
 
 
     @Override
@@ -79,6 +82,7 @@ public class SimpleScuolaService implements ScuolaService{
 
     @Override
     public List<Scuola> getScuole() {
+
         return this.scuolaRepository.findAll();
     }
 
@@ -118,24 +122,86 @@ public class SimpleScuolaService implements ScuolaService{
         String filePath = activityFolderPath + filename;
         // Assicurati che la cartella "activity" esista, altrimenti creala
         File activityFolder = new File(activityFolderPath);
-        List<Scuola> scuole =scuolaRepository.findAll();
-        for (int i = 0; i< scuole.size(); i++) {
+
+        List<Risultati> risultati=risultatiRepository.findAll();
+
+
+        int j=0;
+        for (int i = 0; i< risultati.size(); i++) {
+
             // Creazione della prima riga
-            Row row = sheet.createRow(i);
-            Cell cellId = row.createCell(0);
-            Cell cellNome = row.createCell(1);
-            Cell cellRegione = row.createCell(2);
-            Cell cellProvincia = row.createCell(3);
-            Cell cellCitta = row.createCell(4);
-            Cell cellTipo = row.createCell(5);
+            Row row = sheet.createRow(j);
+            Cell annoAc = row.createCell(0);
+
+            j++;
+            Row row1 = sheet.createRow(j);
+            Cell ScuolaId=row1.createCell(0);
+            Cell cellNome = row1.createCell(1);
+            Cell cellRegione = row1.createCell(2);
+            Cell cellProvincia = row1.createCell(3);
+            Cell cellCitta = row1.createCell(4);
+            Cell cellTipo = row1.createCell(5);
             // Impostazione dei valori delle celle
-            cellId.setCellValue(scuole.get(i).getIdScuola());
-            cellNome.setCellValue(scuole.get(i).getNome());
-            cellRegione.setCellValue(scuole.get(i).getRegione());
-            cellProvincia.setCellValue(scuole.get(i).getProvincia());
-            cellCitta.setCellValue(scuole.get(i).getCitta());
-            cellTipo.setCellValue(scuole.get(i).getTipo());
+            annoAc.setCellValue(risultati.get(i).getAnnoAcc());
+            ScuolaId.setCellValue(risultati.get(i).getScuola().getIdScuola());
+            cellNome.setCellValue(risultati.get(i).getScuola().getNome());
+            cellRegione.setCellValue(risultati.get(i).getScuola().getRegione());
+            cellProvincia.setCellValue(risultati.get(i).getScuola().getProvincia());
+            cellCitta.setCellValue(risultati.get(i).getScuola().getCitta());
+            cellTipo.setCellValue(risultati.get(i).getScuola().getTipo());
+            j++;
+            //cicla le attività
+              for(int p=0;p<risultati.get(i).getAttivita().size();p++){
+                  Row row2 = sheet.createRow(j);
+                  Cell cellNomeAttività = row2.createCell(0);
+                   cellNomeAttività.setCellValue(risultati.get(i).getAttivita().get(p).getNomeAttivita());j++;
+                   //clica i partecipanti
+                    for(int v=0;v<risultati.get(i).getAttivita().get(p).getPartecipanti().size();v++){
+                        Row row3 = sheet.createRow(j);
+                        Cell cellIdP = row3.createCell(0);
+                        Cell cellNomeP = row3.createCell(1);
+                        Cell cellCognomeP = row3.createCell(2);
+                        Cell ScuolaIdP=row3.createCell(3);
+                        Cell cellNomeSP = row1.createCell(4);
+                        Cell cellRegioneP = row1.createCell(5);
+                        Cell cellProvinciaP = row1.createCell(6);
+                        Cell cellCittaP = row1.createCell(7);
+                        Cell cellTipoP = row1.createCell(8);
+                        cellIdP.setCellValue(risultati.get(i).getAttivita().get(p).getPartecipanti().get(v).getIdStudente());
+                        cellNomeP.setCellValue(risultati.get(i).getAttivita().get(p).getPartecipanti().get(v).getNome());
+                        cellCognomeP.setCellValue(risultati.get(i).getAttivita().get(p).getPartecipanti().get(v).getCognome());
+                        ScuolaIdP.setCellValue(risultati.get(i).getScuola().getIdScuola());
+                        cellNomeSP.setCellValue(risultati.get(i).getScuola().getNome());
+                        cellRegioneP.setCellValue(risultati.get(i).getScuola().getRegione());
+                        cellProvinciaP.setCellValue(risultati.get(i).getScuola().getProvincia());
+                        cellCittaP.setCellValue(risultati.get(i).getScuola().getCitta());
+                        cellTipoP.setCellValue(risultati.get(i).getScuola().getTipo());j++;
+
+
+                    }
+              }
+            //cicla gli iscritti
+              for(int c=0;c<risultati.get(i).getIscritti().size();c++){
+                  Row row4 = sheet.createRow(j);
+                  Cell cellIdU = row4.createCell(0);
+                  Cell cellNomeU = row4.createCell(1);
+                  Cell cellCognomeU = row4.createCell(2);
+                  Cell annoImU = row4.createCell(3);
+                  Cell corsoU=row4.createCell(4);
+                  Cell comuneU = row4.createCell(5);
+                  Cell scuolaU = row4.createCell(6);
+
+                  cellIdU.setCellValue(risultati.get(i).getIscritti().get(c).getMatricola());
+                  cellNomeU.setCellValue(risultati.get(i).getIscritti().get(c).getNome());
+                  cellCognomeU.setCellValue(risultati.get(i).getIscritti().get(c).getCognome());
+                  annoImU.setCellValue(risultati.get(i).getIscritti().get(c).getAnnoImm());
+                 corsoU.setCellValue(risultati.get(i).getIscritti().get(c).getCorso());
+                  comuneU.setCellValue(risultati.get(i).getIscritti().get(c).getComuneScuola());
+                  scuolaU.setCellValue(risultati.get(i).getIscritti().get(c).getScuolaProv());j++;
+
+              }
         }
+
 
         try (FileOutputStream outputStream = new FileOutputStream(filename)) {
             workbook.write(outputStream);

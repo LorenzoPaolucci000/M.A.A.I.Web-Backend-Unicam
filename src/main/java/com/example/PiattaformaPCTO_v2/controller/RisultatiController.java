@@ -45,7 +45,7 @@ public class RisultatiController {
     @PostMapping("/download")
     public ResponseEntity<Object> downloadFile(@RequestBody DeleteFileRequest filerequest) throws FileNotFoundException {
 
-        risultatiService.donloadResOnFile(filerequest.getName());
+        risultatiService.donloadResOnFile(filerequest.getName(), filerequest.getAnno());
        return risultatiService.downloadFile(filerequest.getName());
     }
 
