@@ -24,7 +24,7 @@ public interface ScuolaService {
 /**
  * metodo che carica in un file tutte le scuole
  */
-void downloadAllSchhool(String nome);
+void downloadAllSchhool(String nome,int anno);
     /**
      * metodo che si occupa di  scaricare  il file precedentemente creato
      */

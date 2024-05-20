@@ -107,7 +107,7 @@ public class SimpleScuolaService implements ScuolaService{
     }
 
     @Override
-    public void downloadAllSchhool(String filename) {
+    public void downloadAllSchhool(String filename,int anno) {
         // Crea un nuovo workbook Excel
         Workbook workbook = new XSSFWorkbook();
         // Crea un foglio di lavoro
@@ -122,9 +122,12 @@ public class SimpleScuolaService implements ScuolaService{
         String filePath = activityFolderPath + filename;
         // Assicurati che la cartella "activity" esista, altrimenti creala
         File activityFolder = new File(activityFolderPath);
-
-        List<Risultati> risultati=risultatiRepository.findAll();
-
+        List<Risultati> risultati;
+if(anno==0) {
+    risultati = risultatiRepository.findAll();
+}else{
+    risultati = risultatiRepository.findbyAnno(anno);
+}
 
         int j=0;
         for (int i = 0; i< risultati.size(); i++) {

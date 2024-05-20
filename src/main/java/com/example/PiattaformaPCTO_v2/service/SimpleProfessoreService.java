@@ -6,6 +6,7 @@ import com.example.PiattaformaPCTO_v2.collection.Scuola;
 import com.example.PiattaformaPCTO_v2.collection.Universitario;
 import com.example.PiattaformaPCTO_v2.repository.ProfessoreRepository;
 import com.example.PiattaformaPCTO_v2.repository.ScuolaRepository;
+import io.methvin.watcher.DirectoryWatcher;
 import org.apache.poi.hssf.usermodel.HSSFShape;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -15,6 +16,8 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -29,6 +32,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -42,6 +46,10 @@ public class SimpleProfessoreService implements ProfessoreService{
     private ScuolaRepository scuolaRepository;
     @Autowired
     private AttivitaService attivitaService;
+
+
+
+
 
     @Override
     public String save(Professore professore) {
@@ -61,6 +69,11 @@ public class SimpleProfessoreService implements ProfessoreService{
         message+="</table>";
         return message;
     }
+
+
+
+
+
 
     @Override
     public void createEmptyActivity(String nome, int anno, String nomeScuola, String cittaScuola) {
@@ -96,6 +109,17 @@ public class SimpleProfessoreService implements ProfessoreService{
 
 
     }
+
+
+
+    public void processNewFile(Path filePath) {
+        // Implementa la logica per elaborare il file Excel
+        System.out.println("Processing new file: " + filePath.getFileName());
+
+        // Puoi aggiungere qui la logica per leggere e processare il file
+    }
+
+
 
     @Override
     public void uploadActivityDefinitively(String nome) throws IOException {
@@ -187,7 +211,7 @@ public class SimpleProfessoreService implements ProfessoreService{
         }
 
     }
-
+/*
     @Override
     public List<String> getAllPendingActivities() {
 
@@ -214,6 +238,42 @@ public class SimpleProfessoreService implements ProfessoreService{
         }
         return classNames;
     }
+
+*/
+
+
+    public List<String> getAllPendingActivities() {
+        // Recupera la lista delle attività pendenti dalla directory monitorata
+        List<String> classNames = new ArrayList<>();
+        try {
+
+            Path directoryPath = Paths.get("src/main/resources/activity/");
+            File directory = directoryPath.toFile();
+            if (directory.exists() && directory.isDirectory()) {
+                File[] files = directory.listFiles();
+                if (files != null) {
+                    for (File file : files) {
+                        if (file.isFile()) {
+                            String fileName = file.getName();
+                            if (fileName.endsWith(".xlsx")) {
+                                String className = fileName.substring(0, fileName.lastIndexOf('.'));
+                                classNames.add(className);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return classNames;
+    }
+
+
+
+
+
+
 
     @Override
     public void downloadAllProfOnFile(String filename) {

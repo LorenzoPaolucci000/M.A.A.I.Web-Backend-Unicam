@@ -49,7 +49,7 @@ public class ScuolaController {
 
     @PostMapping("/download")
     public ResponseEntity<Object> downloadFile(@RequestBody DeleteFileRequest filerequest) throws FileNotFoundException {
-        scuolaService.downloadAllSchhool(filerequest.getName());
+        scuolaService.downloadAllSchhool(filerequest.getName(), filerequest.getAnno());
       return scuolaService.downloadFile(filerequest.getName());
     }
 
