@@ -100,8 +100,8 @@ public class SimpleRisultatiService implements RisultatiService {
                     String nome= studi.getNome().toUpperCase();
                     String cognome= studi.getCognome().toUpperCase();
                     String citta= studi.getScuola().getCitta().toUpperCase();
-                    List<Iscrizioni> i = this.universitarioService.getIscrizioniAnno(4047);
-                    Iscrizioni is= i.get(0);
+                    List<Immatricolazioni> i = this.universitarioService.getIscrizioniAnno(4047);
+                    Immatricolazioni is= i.get(0);
 
                     for (Universitario u : is.getUniversitari()){
                         if(u.getNome().equals(nome)){
@@ -320,7 +320,7 @@ public class SimpleRisultatiService implements RisultatiService {
                 String nome = att.getNome();
                 for (Studente s : att.getStudPartecipanti()){
                     Universitario uni = universitarioRepository.findByNomeAndCognome(s.getNome().toUpperCase(),s.getCognome().toUpperCase());
-                    List<Iscrizioni> i = this.universitarioService.getIscrizioniAnno(4047);
+                    List<Immatricolazioni> i = this.universitarioService.getIscrizioniAnno(4047);
                     for (Universitario u :i.get(0).getUniversitari()){
                         if (u.getNome().equals(s.getNome().toUpperCase())){
                             if (u.getCognome().equals(s.getCognome().toUpperCase())){

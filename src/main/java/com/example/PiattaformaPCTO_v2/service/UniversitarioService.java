@@ -1,6 +1,6 @@
 package com.example.PiattaformaPCTO_v2.service;
 
-import com.example.PiattaformaPCTO_v2.collection.Iscrizioni;
+import com.example.PiattaformaPCTO_v2.collection.Immatricolazioni;
 import com.example.PiattaformaPCTO_v2.collection.Universitario;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,9 +21,9 @@ public interface UniversitarioService {
 
     void salva();
 
-    List<Iscrizioni> getIscrizioni();
+    List<Immatricolazioni> getIscrizioni();
 
-    List<Iscrizioni> getIscrizioniAnno(int anno);
+    List<Immatricolazioni> getIscrizioniAnno(int anno);
 
 
     Sheet fileOpenerHelper(MultipartFile file);

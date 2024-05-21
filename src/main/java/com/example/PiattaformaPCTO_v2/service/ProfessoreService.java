@@ -1,6 +1,7 @@
 package com.example.PiattaformaPCTO_v2.service;
 
 import com.example.PiattaformaPCTO_v2.collection.Professore;
+import com.example.PiattaformaPCTO_v2.collection.Scuola;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,8 +12,9 @@ import java.util.List;
 
 public interface ProfessoreService {
     String save(Professore professore);
+    /*
     String upload();
-
+*/
     /**
      * metodo che permette allo studente di inserire un'attività vuota
      * @param nome dell'attività
@@ -55,4 +57,9 @@ public interface ProfessoreService {
      * metodo che si occupa di  scaricare  il file precedentemente creato
      */
     ResponseEntity<Object> downloadFile(String name)throws FileNotFoundException;
+
+    /**
+     * metodo che permette di fare upload di un singolo professore
+     */
+    void uploadSingleProf(String email, String nome, String cognome, Scuola scuola,String attività);
 }

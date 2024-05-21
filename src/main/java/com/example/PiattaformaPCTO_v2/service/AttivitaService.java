@@ -10,9 +10,9 @@ import java.util.List;
 public interface AttivitaService {
 
     String save(Attivita attivita);
-
+/*
     void upload();
-
+*/
     /**
      * metodo che aggiunge l'attività con nome e anno
      * @param file su cui inserire gli studenti partecipanti
@@ -20,14 +20,14 @@ public interface AttivitaService {
      * @param nome nome dell'attività
      */
     void uploadConAnno(MultipartFile file,int anno,String nome);
-
+/*
     void uploadSummer();
 
     void uploadCartel();
 
     void uploadMontani(MultipartFile file);
 
-    Sheet fileOpenerHelper(MultipartFile file);
+
 
 
     void uploadOpen(MultipartFile file);
@@ -59,6 +59,8 @@ public interface AttivitaService {
     void uploaedContest23(MultipartFile file);
 
     void uploadRecanati23(MultipartFile file);
+*/
+Sheet fileOpenerHelper(MultipartFile file);
 
     /**
      * Find information about students that chose UNICAM and their high school, given an activity.

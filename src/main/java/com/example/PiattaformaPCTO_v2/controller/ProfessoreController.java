@@ -4,6 +4,7 @@ package com.example.PiattaformaPCTO_v2.controller;
 import com.example.PiattaformaPCTO_v2.Request.ActivityRequest;
 import com.example.PiattaformaPCTO_v2.Request.DeleteFileRequest;
 import com.example.PiattaformaPCTO_v2.Request.UploadDefinitively;
+import com.example.PiattaformaPCTO_v2.Request.UploadProfRequest;
 import com.example.PiattaformaPCTO_v2.collection.Professore;
 import com.example.PiattaformaPCTO_v2.service.ProfessoreService;
 import jakarta.websocket.server.PathParam;
@@ -39,11 +40,11 @@ public class ProfessoreController {
     public String save(@RequestBody Professore professore){
         return professoreService.save(professore);
     }
-    @GetMapping("/upload")
+   /* @GetMapping("/upload")
     public String save(){
         return professoreService.upload();
     }
-
+*/
     @RequestMapping(value="/createEmptyActivity")
 public void createEmptyActivity(@RequestParam("nome") String nome ,@RequestParam("anno") int anno,
                           @RequestParam("scuola")String scuola,@RequestParam("cittaScuola")String cittaScuola)
@@ -93,10 +94,13 @@ System.out.println(activities.size());
     }
 
     @GetMapping("/get")
-    public ResponseEntity<List<Professore>> getProf(){
+    public ResponseEntity<List<Professore>> getProf() {
         List<Professore> p = this.professoreService.getAllProf();
         return new ResponseEntity<>(p, HttpStatus.OK);
     }
-
+    @PostMapping("/uploadSingleProf")
+    public void uploadSingleProf(@RequestBody UploadProfRequest prof ){
+        professoreService.uploadSingleProf(prof.getEmail(),prof.getNome(),prof.getCognome(),prof.getScuolaImp(),prof.getAttivita());
+    }
 
 }

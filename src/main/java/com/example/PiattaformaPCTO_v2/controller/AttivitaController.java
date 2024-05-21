@@ -25,11 +25,11 @@ public class AttivitaController {
         return attivitaService.save(attivita);
     }
 
-
+/*
     @RequestMapping("/upload")
     public void uploadAttivita() {
         attivitaService.upload();
-    }
+    }*/
     @RequestMapping(value = "/uploadConAnno", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void uploadConAnno(@RequestParam("file") MultipartFile file,@RequestParam("anno") int anno,@RequestParam("nome")String nome){attivitaService.uploadConAnno(file,anno,nome);}
 
@@ -40,7 +40,7 @@ public class AttivitaController {
         attivitaService.uploadConAnno(file,anno,nome1);
     }
 
-
+/*
     @RequestMapping("/summer")
     public void uploadSummer() {
         attivitaService.uploadSummer();
@@ -66,7 +66,7 @@ public class AttivitaController {
     public void uploadGioco(@RequestParam("file") MultipartFile file) {
         attivitaService.uploadGioco(file);
     }
-
+*/
     /**
      * Get information about students that chose UNICAM and their high school, given an activity.
      *
@@ -79,7 +79,7 @@ public class AttivitaController {
         return this.attivitaService.findStudentsFromActivity(activityName);
     }
 
-
+/*
     @PostMapping("/a")
     public void uploadG(@RequestParam("file") MultipartFile file){
         attivitaService.uploadG(file);
@@ -123,7 +123,7 @@ public class AttivitaController {
     @PostMapping("/recanati")
     public void uploadRecanati23(@RequestParam("file")MultipartFile file){attivitaService.uploadRecanati23(file);}
 
-
+*/
     @GetMapping("/prova")
     void prova(){attivitaService.prova();}
 

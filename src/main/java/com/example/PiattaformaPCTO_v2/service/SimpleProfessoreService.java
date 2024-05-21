@@ -55,6 +55,7 @@ public class SimpleProfessoreService implements ProfessoreService{
     public String save(Professore professore) {
         return professoreRepository.save(professore).getEmail();
     }
+
     @Override
     public String stampa(){
         List<Professore> profs = professoreRepository.findAll();
@@ -62,7 +63,7 @@ public class SimpleProfessoreService implements ProfessoreService{
         message+="<table>";
         message+="<tr><th>Nome</th><th>Cognome</th><th>Email</th><th>Attivita</th><th>Scuola</th><th>Citta</th><th>Regione</th></tr>";
         for (Professore prof:profs) {
-            Scuola scuola = scuolaRepository.getScuolaById(prof.getScuolaImp());
+            Scuola scuola = scuolaRepository.getScuolaById(prof.getScuolaImp().getIdScuola());
             System.out.println(scuola.getNome());
             message += "<tr><th>"+prof.getNome()+"</th><th>"+prof.getCognome()+"</th><th>"+prof.getEmail()+"</th><th>"+prof.getAttivita()+"</th><th>"+scuola.getNome()+"</th><th>"+scuola.getCitta()+"</th><th>"+scuola.getRegione()+"</th></tr>";
         }
@@ -205,41 +206,12 @@ public class SimpleProfessoreService implements ProfessoreService{
             System.out.println(checkactivity(nome,cognome,attivita));
             if(scuolaRepository.getScuolaByCittaAndNome(cittascuola,scuola)!=null&&
             !checkactivity(nome,cognome,attivita)) {
-                Professore prof=new Professore(nome,cognome,email,scuola1.getIdScuola(),attivita);
+                Professore prof=new Professore(nome,cognome,email,scuola1,attivita);
                 professoreRepository.save(prof);
             }
         }
 
     }
-/*
-    @Override
-    public List<String> getAllPendingActivities() {
-
-
-        String packageName = "activity";
-        List<String> classNames = new ArrayList<>();
-        String packagePath = packageName.replace('.', '/');
-        File packageDirectory = new File(Thread.currentThread().getContextClassLoader().getResource(packagePath).getFile());
-
-        if (packageDirectory.exists() && packageDirectory.isDirectory()) {
-            File[] files = packageDirectory.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    if (file.isFile()) {
-                        String fileName = file.getName();
-                        if (fileName.endsWith(".xlsx")) {
-                            String className = fileName.substring(0, fileName.lastIndexOf('.'));
-                            classNames.add(className);
-                        }
-                    }
-                }
-            }
-
-        }
-        return classNames;
-    }
-
-*/
 
 
     public List<String> getAllPendingActivities() {
@@ -311,7 +283,7 @@ public class SimpleProfessoreService implements ProfessoreService{
             cellEmail.setCellValue(professori.get(i).getEmail());
             cellNome.setCellValue(professori.get(i).getNome());
             cellCognome.setCellValue(professori.get(i).getCognome());
-            cellScuola.setCellValue(professori.get(i).getScuolaImp());
+            cellScuola.setCellValue(professori.get(i).getScuolaImp().getIdScuola());
             cellAttivita.setCellValue(professori.get(i).getAttivita());
         }
 
@@ -364,6 +336,13 @@ public class SimpleProfessoreService implements ProfessoreService{
 
     }
 
+    @Override
+    public void uploadSingleProf(String email, String nome, String cognome, Scuola scuola, String attività) {
+        System.out.println(scuolaRepository.getScuolaById(scuola.getIdScuola())==null);
+        if(professoreRepository.getProfByEmail(email)==null&&scuolaRepository.getScuolaById(scuola.getIdScuola())!=null){
+            professoreRepository.save(new Professore(nome,cognome,email,scuola,attività));
+        }
+    }
 
 
     /**
@@ -405,7 +384,7 @@ return professoreRepository.getProfessoreByNomeCognomeAttivita(nome,cognome,atti
         List<Professore> p = this.professoreRepository.findAll();
         return p;
     }
-
+/*
     @Override
     public String upload()  {
         int counter = 0;
@@ -575,7 +554,7 @@ return professoreRepository.getProfessoreByNomeCognomeAttivita(nome,cognome,atti
     }
 
 
-
+*/
    @Override
     public Sheet fileOpenerHelper(MultipartFile file) {
         try {

@@ -3,21 +3,14 @@ package com.example.PiattaformaPCTO_v2.service;
 import com.example.PiattaformaPCTO_v2.collection.*;
 import com.example.PiattaformaPCTO_v2.dto.ActivityViewDTOPair;
 import com.example.PiattaformaPCTO_v2.repository.*;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
@@ -51,7 +44,7 @@ public class SimpleAttivitaService implements AttivitaService {
     @Autowired
     private RisultatiAttRepository risAttRepository;
     @Autowired
-    private IscrizioniRepository iscrizioniRepository;
+    private ImmatricolazioniRepository immatricolazioniRepository;
     @Autowired
     private StudenteRepository studenteRepository;
     @Override
@@ -59,7 +52,7 @@ public class SimpleAttivitaService implements AttivitaService {
         return attivitaRepository.save(attivita).getNome();
     }
 
-
+/*
     @Override
     public void upload() {
         String filePath = "src/main/resources/Progetto-NERD-2021-2022.xlsx";
@@ -97,7 +90,7 @@ public class SimpleAttivitaService implements AttivitaService {
             throw new RuntimeException(e);
         }
     }
-
+*/
     public void uploadConAnno(MultipartFile file,int anno,String name){
 
 
@@ -118,8 +111,9 @@ public class SimpleAttivitaService implements AttivitaService {
             Scuola scuola = scuolaRepository.getScuolaByCittaAndNome(trovata,sT);
             String nome = row.getCell(0).getStringCellValue();
             String cognome = row.getCell(1).getStringCellValue();
+            String email="ciao";
             String id = nome + cognome + scuola.getNome();
-            Studente stud = new Studente(id, nome, cognome, scuola);
+            Studente stud = new Studente(id, nome, cognome,email,scuola);
             attivita.getStudPartecipanti().add(stud);
             studenteRepository.save(stud);//aggiunto
 
@@ -203,7 +197,7 @@ System.out.println(attivita.getNome());
     }
 
 
-
+/*
     //file path
     @Override
     public void uploadSummer() {
@@ -672,7 +666,7 @@ System.out.println(attivita.getNome());
         System.out.println(this.save(attivita));
 
     }
-
+*/
 
     /**
      * Find information about students that chose UNICAM and their high school, given an activity.
@@ -689,7 +683,7 @@ System.out.println(attivita.getNome());
         if(activity.getNome().equals("CONTEST_INFORMATICA_X_GIOCO_4043")){
             System.out.println("qua");
             activity.getStudPartecipanti().forEach(s -> {
-                List<Iscrizioni> i = this.universitarioService.getIscrizioniAnno(4047);
+                List<Immatricolazioni> i = this.universitarioService.getIscrizioniAnno(4047);
                 System.out.println(i.size());
                 for (Universitario un : i.get(0).getUniversitari()){
                     if(un.getNome().equals(s.getNome().toUpperCase())){
@@ -702,7 +696,7 @@ System.out.println(attivita.getNome());
             });
         }else {
             activity.getStudPartecipanti().forEach(s -> {
-                List<Iscrizioni> i = this.universitarioService.getIscrizioniAnno(4047);
+                List<Immatricolazioni> i = this.universitarioService.getIscrizioniAnno(4047);
                 for (Universitario un : i.get(0).getUniversitari()){
                     if(un.getNome().equals(s.getNome().toUpperCase())){
                         if (un.getCognome().equals(s.getCognome().toUpperCase())){

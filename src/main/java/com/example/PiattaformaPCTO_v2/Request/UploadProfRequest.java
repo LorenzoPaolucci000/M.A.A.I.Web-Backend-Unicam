@@ -1,36 +1,27 @@
-package com.example.PiattaformaPCTO_v2.collection;
+package com.example.PiattaformaPCTO_v2.Request;
 
-import com.example.PiattaformaPCTO_v2.service.Utilities;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.Builder;
-import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import com.example.PiattaformaPCTO_v2.collection.Professore;
+import com.example.PiattaformaPCTO_v2.collection.Scuola;
 
-@Data
-@Builder
-@Document(collection = "Professori")
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class Professore {
+public class UploadProfRequest {
 
-
-    
-    @Id
     private String email;
 
     private String nome;
     private String cognome;
     private Scuola scuolaImp;
     private String attivita;
-    
-    public Professore(String nome, String cognome,String email, Scuola scuolaImp,String attivita){
+
+    public UploadProfRequest(String nome, String cognome,String email, Scuola scuolaImp,String attivita){
         this.nome = nome;
         this.cognome = cognome;
         this.email = email;
         this.scuolaImp = scuolaImp;
         this.attivita = attivita;
     }
+public UploadProfRequest(){
 
+}
     public String toString(){
         return "Nome:"+this.nome+"; Email: "+this.email+"; Scuola: "+this.scuolaImp;
     }
@@ -79,4 +70,5 @@ public class Professore {
     public String getAttivita() {
         return attivita;
     }
+
 }

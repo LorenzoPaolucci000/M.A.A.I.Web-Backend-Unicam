@@ -1,7 +1,7 @@
 package com.example.PiattaformaPCTO_v2.controller;
 
-import com.example.PiattaformaPCTO_v2.collection.Iscrizioni;
-import com.example.PiattaformaPCTO_v2.collection.Universitario;
+import com.example.PiattaformaPCTO_v2.collection.*;
+import com.example.PiattaformaPCTO_v2.repository.*;
 import com.example.PiattaformaPCTO_v2.service.UniversitarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -54,14 +54,17 @@ public class UniversitariController {
 
 
     @GetMapping("/geti")
-    public ResponseEntity<List<Iscrizioni>> getIscrizioni(){
-        List<Iscrizioni> i = this.universitarioService.getIscrizioni();
+    public ResponseEntity<List<Immatricolazioni>> getIscrizioni(){
+        List<Immatricolazioni> i = this.universitarioService.getIscrizioni();
         return new ResponseEntity<>(i,HttpStatus.OK);
     }
 
     @GetMapping("/geti/{anno}")
-    public ResponseEntity<List<Iscrizioni>> getIscrizioniAnno(@PathVariable int anno){
-        List<Iscrizioni> i = this.universitarioService.getIscrizioniAnno(anno);
+    public ResponseEntity<List<Immatricolazioni>> getIscrizioniAnno(@PathVariable int anno){
+        List<Immatricolazioni> i = this.universitarioService.getIscrizioniAnno(anno);
         return new ResponseEntity<>(i,HttpStatus.OK);
     }
+
+
+
 }

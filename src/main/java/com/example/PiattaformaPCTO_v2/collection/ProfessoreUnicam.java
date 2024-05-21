@@ -8,27 +8,18 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @Builder
-@Document(collection = "Studenti")
+@Document(collection = "ProfessoriUniversitari")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Studente {
-
+public class ProfessoreUnicam {
     @Id
-    private String idStudente;
     private String nome;
     private String cognome;
     private String email;
-    private Scuola scuola;
 
-    public Studente(String idStudente, String nome, String cognome,String email, Scuola scuola) {
-        this.idStudente = idStudente;
+    public ProfessoreUnicam(String nome, String cognome, String email) {
         this.nome = nome;
         this.cognome = cognome;
-        this.scuola = scuola;
-        this.email=email;
-    }
-
-    public String getIdStudente() {
-        return idStudente;
+        this.email = email;
     }
 
     public String getNome() {
@@ -39,19 +30,21 @@ public class Studente {
         return cognome;
     }
 
-    public Scuola getScuola() {
-        return scuola;
-    }
-
-    public void setScuola(Scuola scuola) {
-        this.scuola = scuola;
-    }
-
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+
+    public String toString(){
+        return "Nome:"+this.nome+"; Cognome: "+this.cognome+"; Email: "+this.email;
+    }
+    public String toJson(){
+        return "{nome:"+this.nome+";cognome:"+this.cognome+";email:"+this.email+"}";
+    }
+    public boolean equals(ProfessoreUnicam prof){
+        if(prof.getEmail().equals(this.getEmail()) ){
+            return true;
+        }
+        return false;
     }
 }

@@ -1,19 +1,16 @@
 package com.example.PiattaformaPCTO_v2.service;
 
 import com.example.PiattaformaPCTO_v2.collection.Attivita;
-import com.example.PiattaformaPCTO_v2.collection.Iscrizioni;
+import com.example.PiattaformaPCTO_v2.collection.Immatricolazioni;
 import com.example.PiattaformaPCTO_v2.collection.Universitario;
-import com.example.PiattaformaPCTO_v2.repository.IscrizioniRepository;
+import com.example.PiattaformaPCTO_v2.repository.ImmatricolazioniRepository;
 import com.example.PiattaformaPCTO_v2.repository.UniversitarioRepository;
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -21,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -34,7 +30,7 @@ public class SimpleUniversitarioService implements UniversitarioService {
     @Autowired
     private UniversitarioRepository universitarioRepository;
     @Autowired
-    private IscrizioniRepository iscrizioniRepository;
+    private ImmatricolazioniRepository immatricolazioniRepository;
     @Autowired
     private MongoTemplate mongoTemplate;
 
@@ -52,8 +48,8 @@ metodo che inserisce tutti quei studenti inseriti nell'exel in quell'anno
 
 @Override
     public String uploadConAnno(MultipartFile file,int anno) {
-       // System.out.println(file.getOriginalFilename());
-        Iscrizioni i = new Iscrizioni(anno);
+
+        Immatricolazioni i = new Immatricolazioni(anno);
         Sheet dataSheet = this.fileOpenerHelper(file);
         Iterator<Row> iterator = dataSheet.rowIterator();
         iterator.next();
@@ -83,7 +79,7 @@ metodo che inserisce tutti quei studenti inseriti nell'exel in quell'anno
 
           if(isAnno(anno,Corso)!=null)this.addElementi(i,isAnno(anno,Corso));
           else {
-              this.iscrizioniRepository.save(i);
+              this.immatricolazioniRepository.save(i);
           }
         return "caricati";
     }
@@ -92,11 +88,11 @@ metodo che inserisce tutti quei studenti inseriti nell'exel in quell'anno
      * metodo che restituisce l'iscrizione con quel determinato anno accademico e corso
      * @return null se non lo trova
      */
-    private Iscrizioni isAnno(int anno,String corso) {
+    private Immatricolazioni isAnno(int anno, String corso) {
 
-        List<Iscrizioni> iscrizioni=iscrizioniRepository.findByAnno(anno);
-        for(int i=0;i<iscrizioni.size();i++){
-            if(iscrizioni.get(i).getUniversitari().get(0).getCorso().equals(corso))return iscrizioni.get(i);
+        List<Immatricolazioni> immatricolazioni = immatricolazioniRepository.findByAnno(anno);
+        for(int i = 0; i< immatricolazioni.size(); i++){
+            if(immatricolazioni.get(i).getUniversitari().get(0).getCorso().equals(corso))return immatricolazioni.get(i);
         }
 
 return null;
@@ -107,15 +103,15 @@ return null;
      * @param i1 iscrizioni da aggiungere
      * @param i2 iscrizioni su cui aggiungere i1
      */
-    private void addElementi(Iscrizioni i1,Iscrizioni i2 ){
-        List<Iscrizioni> iscrizioniList=iscrizioniRepository.findAll();
-        iscrizioniList.remove(i2);
-        this.iscrizioniRepository.deleteAll();
+    private void addElementi(Immatricolazioni i1, Immatricolazioni i2 ){
+        List<Immatricolazioni> immatricolazioniList = immatricolazioniRepository.findAll();
+        immatricolazioniList.remove(i2);
+        this.immatricolazioniRepository.deleteAll();
         for(int i=0;i<i1.getUniversitari().size();i++){
             i2.getUniversitari().add(i1.getUniversitari().get(i));
         }
-        iscrizioniList.add(i2);
-        this.iscrizioniRepository.saveAll(iscrizioniList);
+        immatricolazioniList.add(i2);
+        this.immatricolazioniRepository.saveAll(immatricolazioniList);
 }
 
     /**
@@ -143,7 +139,7 @@ return mapping;
     public String upload(MultipartFile file) {
         LocalDate date = LocalDate.now();
         System.out.println(file.getOriginalFilename());
-        Iscrizioni i = new Iscrizioni((date.getYear()*2)+1);
+        Immatricolazioni i = new Immatricolazioni((date.getYear()*2)+1);
         Sheet dataSheet = this.fileOpenerHelper(file);
         Iterator<Row> iterator = dataSheet.rowIterator();
         iterator.next();
@@ -164,7 +160,7 @@ return mapping;
             }
         }
 
-        this.iscrizioniRepository.save(i);
+        this.immatricolazioniRepository.save(i);
 
         return "caricati";
     }
@@ -183,15 +179,15 @@ return mapping;
     }
 
     @Override
-    public List<Iscrizioni> getIscrizioni() {
-       return this.iscrizioniRepository.findAll();
+    public List<Immatricolazioni> getIscrizioni() {
+       return this.immatricolazioniRepository.findAll();
     }
 
     @Override
-    public List<Iscrizioni> getIscrizioniAnno(int anno) {
+    public List<Immatricolazioni> getIscrizioniAnno(int anno) {
         Query query = new Query();
         query.addCriteria(Criteria.where("annoAc").is(anno));
-        return mongoTemplate.find(query,Iscrizioni.class);
+        return mongoTemplate.find(query, Immatricolazioni.class);
     }
 
     @Override

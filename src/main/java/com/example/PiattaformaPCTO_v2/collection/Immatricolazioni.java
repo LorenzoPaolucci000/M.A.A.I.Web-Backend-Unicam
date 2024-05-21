@@ -3,26 +3,22 @@ package com.example.PiattaformaPCTO_v2.collection;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@Document(collection = "Iscrizioni")
+@Document(collection = "Immatricolazioni")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Iscrizioni {
+public class Immatricolazioni {
 
     private int annoAc;
 
     private List<Universitario> universitari;
 
 
-    public Iscrizioni(int annoAc) {
+    public Immatricolazioni(int annoAc) {
         this.annoAc = annoAc;
         this.universitari= new ArrayList<>();
     }
