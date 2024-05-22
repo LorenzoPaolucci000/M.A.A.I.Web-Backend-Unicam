@@ -40,21 +40,21 @@ public class ProfessoreController {
     public String save(@RequestBody Professore professore){
         return professoreService.save(professore);
     }
-   /* @GetMapping("/upload")
-    public String save(){
-        return professoreService.upload();
-    }
-*/
-    @RequestMapping(value="/createEmptyActivity")
+
+ /*   @RequestMapping(value="/createEmptyActivity")
 public void createEmptyActivity(@RequestParam("nome") String nome ,@RequestParam("anno") int anno,
                           @RequestParam("scuola")String scuola,@RequestParam("cittaScuola")String cittaScuola)
     {professoreService.createEmptyActivity(nome, anno, scuola, cittaScuola);}
+*/
+
+
 
     @PostMapping("/createEmptyActivity1")
     public void createEmptyActivity1(@RequestBody ActivityRequest create)
     {
 
-        professoreService.createEmptyActivity(create.getNome(), create.getAnno(), create.getNomeScuola(), create.getCittaScuola());}
+        professoreService.createEmptyActivity(create.getNome(), create.getTipo(), create.getScuola(),create.getAnno(),
+               create.getSede(), create.getDataInizio(),create.getDataFine(),create.getDescrizione(),create.getProfUnicam(),create.getProfReferente());}
 
 
     /**

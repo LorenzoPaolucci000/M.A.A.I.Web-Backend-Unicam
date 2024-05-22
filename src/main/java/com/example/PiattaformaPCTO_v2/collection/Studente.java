@@ -12,24 +12,21 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Studente {
 
-    @Id
-    private String idStudente;
+
     private String nome;
     private String cognome;
     private String email;
     private Scuola scuola;
 
-    public Studente(String idStudente, String nome, String cognome,String email, Scuola scuola) {
-        this.idStudente = idStudente;
+    public Studente( String nome, String cognome,String email, Scuola scuola) {
+
         this.nome = nome;
         this.cognome = cognome;
         this.scuola = scuola;
         this.email=email;
     }
 
-    public String getIdStudente() {
-        return idStudente;
-    }
+
 
     public String getNome() {
         return nome;

@@ -112,8 +112,8 @@ public class SimpleAttivitaService implements AttivitaService {
             String nome = row.getCell(0).getStringCellValue();
             String cognome = row.getCell(1).getStringCellValue();
             String email="ciao";
-            String id = nome + cognome + scuola.getNome();
-            Studente stud = new Studente(id, nome, cognome,email,scuola);
+
+            Studente stud = new Studente(nome, cognome,email,scuola);
             attivita.getStudPartecipanti().add(stud);
             studenteRepository.save(stud);//aggiunto
 

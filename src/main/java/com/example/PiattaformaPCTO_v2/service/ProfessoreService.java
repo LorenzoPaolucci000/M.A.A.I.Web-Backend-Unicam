@@ -1,13 +1,16 @@
 package com.example.PiattaformaPCTO_v2.service;
 
 import com.example.PiattaformaPCTO_v2.collection.Professore;
+import com.example.PiattaformaPCTO_v2.collection.ProfessoreUnicam;
 import com.example.PiattaformaPCTO_v2.collection.Scuola;
+import com.example.PiattaformaPCTO_v2.enumeration.Sede;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ProfessoreService {
@@ -15,14 +18,23 @@ public interface ProfessoreService {
     /*
     String upload();
 */
+
     /**
-     * metodo che permette allo studente di inserire un'attività vuota
-     * @param nome dell'attività
-     * @param anno in cui si svolge l'attività
-     * @param nomeScuola scuola coinvolta
-     * @param cittaScuola città della scuola coinvolta
+     * metodo che crea un attività vuota
+     * @param nome
+     * @param tipo
+     * @param scuola
+     * @param anno
+     * @param sede
+     * @param dataInizio
+     * @param dataFine
+     * @param descrizione
+     * @param profUnicam
+     * @param profReferente
      */
-    void createEmptyActivity(String nome,int anno,String nomeScuola,String cittaScuola);
+
+    void createEmptyActivity(String nome, String tipo, String scuola, int anno,Sede sede, LocalDateTime dataInizio, LocalDateTime dataFine
+            , String descrizione, List<ProfessoreUnicam> profUnicam, Professore profReferente);
 
     /**
      * il docente carica definitivamente l'attività con i suoi iscritti nel database

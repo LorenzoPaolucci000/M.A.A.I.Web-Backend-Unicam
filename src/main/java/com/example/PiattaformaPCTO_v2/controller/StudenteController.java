@@ -15,21 +15,17 @@ public class StudenteController {
     private StudenteService studenteService;
 
     /**
-     * lo studente che si iscrive ad una attività
-     * @param nome
-     * @param cognome
-     * @param filepath nome dell'attività
+     * studente che si iscrive ad
+     * @param create
      */
-    @RequestMapping(value="/addIscrizione")
-    public void addIscrizione(@RequestParam("nome") String nome ,@RequestParam("cognome") String cognome,
-                                    @RequestParam("filepath")String filepath)
-    {studenteService.addIscrizione(nome,cognome,filepath);}
+
 
     @PostMapping("/addIscrizione1")
     public void addIscrizione1(@RequestBody IscrizioneRequest create)
     {
 
-        studenteService.addIscrizione(create.getNome(),create.getCognome(),create.getFilepath());
+        studenteService.addIscrizione(create.getNome(),create.getCognome(),create.getEmail(),create.getScuola(),create.getNomeAttivita(),create.getAnno());
+
     }
 
 

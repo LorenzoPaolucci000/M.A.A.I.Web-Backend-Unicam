@@ -1,23 +1,14 @@
 package com.example.PiattaformaPCTO_v2.service;
 
-import com.example.PiattaformaPCTO_v2.collection.Attivita;
-import com.example.PiattaformaPCTO_v2.collection.Professore;
-import com.example.PiattaformaPCTO_v2.collection.Scuola;
-import com.example.PiattaformaPCTO_v2.collection.Universitario;
+import com.example.PiattaformaPCTO_v2.collection.*;
+import com.example.PiattaformaPCTO_v2.enumeration.Sede;
+import com.example.PiattaformaPCTO_v2.repository.AttivitaRepository;
 import com.example.PiattaformaPCTO_v2.repository.ProfessoreRepository;
 import com.example.PiattaformaPCTO_v2.repository.ScuolaRepository;
-import io.methvin.watcher.DirectoryWatcher;
-import org.apache.poi.hssf.usermodel.HSSFShape;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -27,15 +18,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 public class SimpleProfessoreService implements ProfessoreService{
@@ -46,7 +33,8 @@ public class SimpleProfessoreService implements ProfessoreService{
     private ScuolaRepository scuolaRepository;
     @Autowired
     private AttivitaService attivitaService;
-
+    @Autowired
+    private AttivitaRepository attivitaRepository;
 
 
 
@@ -77,38 +65,17 @@ public class SimpleProfessoreService implements ProfessoreService{
 
 
     @Override
-    public void createEmptyActivity(String nome, int anno, String nomeScuola, String cittaScuola) {
-        // Crea un nuovo workbook Excel
-        Workbook workbook = new XSSFWorkbook();
-        // Crea un foglio di lavoro
-        Sheet sheet = workbook.createSheet("Sheet1");
-        // Percorso della cartella delle risorse
-        String resourcesPath = "src/main/resources/";
-        // Percorso completo della cartella "activity" nelle risorse
-        String activityFolderPath = resourcesPath + "activity/";
-        // Nome del file Excel
-        String filename = nome+anno+".xlsx";
-        // Percorso completo del file Excel
-        String filePath = activityFolderPath + filename;
-        // Assicurati che la cartella "activity" esista, altrimenti creala
-        File activityFolder = new File(activityFolderPath);
-        if (!activityFolder.exists()) {
-            activityFolder.mkdirs();
-        }
-        try {
-            // Crea un file di output
-            FileOutputStream fileOut = new FileOutputStream(filePath);
-            // Scrivi il workbook su file
-            workbook.write(fileOut);
-            fileOut.close();
-            workbook.close();
-            insertScuolaOnFile(nomeScuola,cittaScuola,filePath);
-        } catch (IOException e) {
-            System.out.println("Si è verificato un errore durante la scrittura del file: " + e.getMessage());
-        }
+    public void createEmptyActivity(String nome, String tipo, String scuola, int anno,Sede sede, LocalDateTime dataInizio, LocalDateTime dataFine
+            , String descrizione, List<ProfessoreUnicam> profUnicam, Professore profReferente) {
+        /*
+        String nome, String tipo, int annoAcc, List<Studente> studPartecipanti, Sede sede,
+                    LocalDateTime dataInizio, LocalDateTime dataFine, String descrizione,
+                    List<ProfessoreUnicam> profUnicam, Professore profReferente
+         */
+Attivita attivita=new Attivita(nome,tipo,anno,new ArrayList<>(),sede,dataInizio,dataFine,descrizione,profUnicam,profReferente);
+attivita.setIscrizione(true);
 
-
-
+attivitaRepository.save(attivita);
     }
 
 
@@ -155,22 +122,53 @@ public class SimpleProfessoreService implements ProfessoreService{
 
 
     /**
-     * metodo che inserisce la scuola e la città nella prima riga del file excel
+     * metodo che inserisce la prima riga di un file excel con tutte le informzioni sulle attivita
      */
-    private void insertScuolaOnFile(String scuola,String cittaScuola,String filePath){
+    private void insertFirstRowOnFile(String nome, String tipo, String scuola, int anno,Sede sede, LocalDateTime dataInizio, LocalDateTime dataFine
+            , String descrizione,String filePath){
 
         Workbook workbook = new XSSFWorkbook();
         // Crea un foglio di lavoro
-        Sheet sheet = workbook.createSheet("Sheet1");
+        Sheet sheet0 = workbook.createSheet("Sheet0");
         // Crea la prima riga
-        Row row = sheet.createRow(0);
+        Row row = sheet0.createRow(0);
         // Scrivi scuola nella prima colonna
-        Cell cell1 = row.createCell(0);
-        cell1.setCellValue(scuola);
-        // Scrivi città scuola nella seconda colonna
-        Cell cell2 = row.createCell(1);
-        cell2.setCellValue(cittaScuola);
-        try {
+        Cell cellnome=row.createCell(0);
+        Cell celltipo=row.createCell(1);
+        Cell cellscuola=row.createCell(2);
+        Cell cellanno=row.createCell(3);
+        Cell cellsede=row.createCell(4);
+        Cell cellInizio=row.createCell(5);
+        Cell cellFine=row.createCell(6);
+        Cell cellDescrizione=row.createCell(7);
+        cellnome.setCellValue("Nome");
+        celltipo.setCellValue("Tipo");
+        cellscuola.setCellValue("Scuola");
+        cellanno.setCellValue("Anno");
+        cellsede.setCellValue("Sede");
+        cellInizio.setCellValue("DataInizio");
+        cellFine.setCellValue("DataFine");
+        cellDescrizione.setCellValue("descrizione");
+        Row row2 = sheet0.createRow(1);
+        Cell cellnome1=row2.createCell(0);
+        Cell celltipo1=row2.createCell(1);
+        Cell cellscuola1=row2.createCell(2);
+        Cell cellanno1=row2.createCell(3);
+        Cell cellsede1=row2.createCell(4);
+        Cell cellInizio1=row2.createCell(5);
+        Cell cellFine1=row2.createCell(6);
+        Cell cellDescrizione1=row2.createCell(7);
+        cellnome1.setCellValue(nome);
+        celltipo1.setCellValue(tipo);
+        cellscuola1.setCellValue(scuola);
+        cellanno1.setCellValue(anno);
+        cellsede1.setCellValue(sede.toString());
+        cellInizio1.setCellValue(dataInizio.toString());
+        cellFine1.setCellValue(dataFine.toString());
+        cellDescrizione1.setCellValue(descrizione);
+
+
+       try {
             // Crea un file di output
             FileOutputStream fileOut = new FileOutputStream(filePath);
             // Scrivi il workbook su file
@@ -182,7 +180,68 @@ public class SimpleProfessoreService implements ProfessoreService{
         }
 
 }
+    /**
+     * metodo che inserisce i professori nel file delle attività vuote
+     */
+    private void insertProfOnFile(List<ProfessoreUnicam>prof,Professore profReferente,String filePath,String attivita){
 
+        Workbook workbook = new XSSFWorkbook();
+        // Crea un foglio di lavoro
+        Sheet sheet = workbook.createSheet("Sheet1");
+        // Crea la prima riga
+        Row row = sheet.createRow(2);
+        // Scrivi scuola nella prima colonna
+        Cell cellemail=row.createCell(0);
+        Cell cellnome=row.createCell(1);
+        Cell cellcognome=row.createCell(2);
+        Cell cellattivita=row.createCell(3);
+        cellemail.setCellValue("EmailReferente");
+        cellnome.setCellValue("NomeReferente");
+        cellcognome.setCellValue("CognomeReferente");
+        cellattivita.setCellValue("AttivitàRefente");
+        Row row1 = sheet.createRow(3);
+        Cell cellemail1=row1.createCell(0);
+        Cell cellnome1=row1.createCell(1);
+        Cell cellcognome1=row1.createCell(2);
+        Cell cellattivita1=row1.createCell(3);
+        cellemail1.setCellValue(profReferente.getEmail());
+        cellnome1.setCellValue(profReferente.getNome());
+        cellcognome1.setCellValue(profReferente.getCognome());
+        cellattivita1.setCellValue(attivita);
+        int j=4;
+            for(int i=0;i<prof.size();i++){
+
+                Row row2 = sheet.createRow(j);
+                Cell cellemail2=row2.createCell(0);
+                Cell cellnome2=row2.createCell(1);
+                Cell cellcognome2=row2.createCell(2);
+                cellemail2.setCellValue("EmailProfUniversitario");
+                cellnome2.setCellValue("NomeProfUniversitario");
+                cellcognome2.setCellValue("CognomeProfUniversitario");
+                j++;
+                Row row3 = sheet.createRow(j);
+                Cell cellemail3=row3.createCell(0);
+                Cell cellnome3=row3.createCell(1);
+                Cell cellcognome3=row3.createCell(2);
+                cellemail3.setCellValue(prof.get(i).getEmail());
+                cellnome3.setCellValue(prof.get(i).getNome());
+                cellcognome3.setCellValue(prof.get(i).getCognome());
+
+            }
+
+
+        try {
+            // Crea un file di output
+            FileOutputStream fileOut = new FileOutputStream(filePath);
+            // Scrivi il workbook su file
+            workbook.write(fileOut);
+            fileOut.close();
+            workbook.close();
+        } catch (IOException e) {
+            System.out.println("Si è verificato un errore durante la scrittura del file: " + e.getMessage());
+        }
+
+    }
 
 
 

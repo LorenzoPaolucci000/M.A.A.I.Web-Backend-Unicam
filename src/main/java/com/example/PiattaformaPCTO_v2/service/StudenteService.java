@@ -1,15 +1,18 @@
 package com.example.PiattaformaPCTO_v2.service;
 
+import com.example.PiattaformaPCTO_v2.collection.Scuola;
 import com.example.PiattaformaPCTO_v2.collection.Studente;
 
 public interface StudenteService {
 
     /**
-     * metodo che permette allo studente di inscriversi ad una attività
-     * @param nome dello studente
-     * @param cognome dello studente
-     * @param filePath sarebbe il nome dell'attività con anno
+     *
+     * @param nome
+     * @param cognome
+     * @param email
+     * @param nomeAttivita
+     * @param anno
      */
-    void addIscrizione(String nome,String cognome,String filePath);
+    void addIscrizione(String nome, String cognome, String email, Scuola scuola,String nomeAttivita, int anno);
     String save(Studente studente);
 }

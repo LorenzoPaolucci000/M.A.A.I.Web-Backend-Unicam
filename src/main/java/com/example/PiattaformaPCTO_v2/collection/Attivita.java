@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @NoArgsConstructor
@@ -45,8 +46,9 @@ public class Attivita {
      */
     private Professore profReferente;
 
-
-
+  private boolean iscrizionePossibile=false;
+  //la scuola potrebbe non esserci
+private String scuola;
     public Attivita(String nome,String tipo, int annoAcc, List<Studente> studPartecipanti) {
         this.nome = nome;
         this.tipo= tipo;
@@ -70,6 +72,9 @@ public class Attivita {
     }
     public void addStudente(Studente studente){
         this.studPartecipanti.add(studente);
+    }
+    public void addScuola(String scuola){
+        this.scuola=scuola;
     }
     public void addProfUnicam(ProfessoreUnicam prof){
         this.profUnicam.add(prof);
@@ -112,5 +117,30 @@ public class Attivita {
 
     public Professore getProfReferente() {
         return profReferente;
+    }
+
+    public String getScuola() {
+        return scuola;
+    }
+
+    public void setIscrizione(boolean iscrizione) {
+        this.iscrizionePossibile = iscrizione;
+    }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if(this == obj ) return true;
+        if(!(obj instanceof Attivita)) return false;
+       Attivita other = (Attivita) obj;
+        if(this.nome.equals(other.nome) && this.annoAcc==other.annoAcc) return true;
+        else return false;
+    }
+
+    public int hashCode() {
+        int hash = 7;
+        hash = 31 * hash + Objects.hashCode(this.nome);
+        hash = 31 * hash + Objects.hashCode(this.annoAcc);
+        return hash;
     }
 }

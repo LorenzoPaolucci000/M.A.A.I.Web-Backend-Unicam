@@ -1,15 +1,30 @@
 package com.example.PiattaformaPCTO_v2.Request;
 
+import com.example.PiattaformaPCTO_v2.collection.Scuola;
+
 public class IscrizioneRequest {
     private String nome;
     private String cognome;
+   private String email;
+   private String nomeAttivita;
+   private int anno;
+   private Scuola scuola;
 
-    private String filepath;
-
-    public IscrizioneRequest(String nome, String cognome, String filepath) {
+    public IscrizioneRequest(String nome, String cognome, String email, String nomeAttivita, int anno,Scuola scuola) {
         this.nome = nome;
         this.cognome = cognome;
-        this.filepath = filepath;
+        this.email = email;
+        this.nomeAttivita = nomeAttivita;
+        this.anno = anno;
+        this.scuola=scuola;
+    }
+
+    public String getNomeAttivita() {
+        return nomeAttivita;
+    }
+
+    public int getAnno() {
+        return anno;
     }
 
     public String getNome() {
@@ -28,11 +43,13 @@ public class IscrizioneRequest {
         this.cognome = cognome;
     }
 
-    public String getFilepath() {
-        return filepath;
+
+
+    public String getEmail() {
+        return  email;
     }
 
-    public void setFilepath(String filepath) {
-        this.filepath = filepath;
+    public Scuola getScuola() {
+        return scuola;
     }
 }

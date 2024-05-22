@@ -161,16 +161,16 @@ if(anno==0) {
                    //clica i partecipanti
                     for(int v=0;v<risultati.get(i).getAttivita().get(p).getPartecipanti().size();v++){
                         Row row3 = sheet.createRow(j);
-                        Cell cellIdP = row3.createCell(0);
-                        Cell cellNomeP = row3.createCell(1);
-                        Cell cellCognomeP = row3.createCell(2);
-                        Cell ScuolaIdP=row3.createCell(3);
-                        Cell cellNomeSP = row1.createCell(4);
-                        Cell cellRegioneP = row1.createCell(5);
-                        Cell cellProvinciaP = row1.createCell(6);
-                        Cell cellCittaP = row1.createCell(7);
-                        Cell cellTipoP = row1.createCell(8);
-                        cellIdP.setCellValue(risultati.get(i).getAttivita().get(p).getPartecipanti().get(v).getIdStudente());
+
+                        Cell cellNomeP = row3.createCell(0);
+                        Cell cellCognomeP = row3.createCell(1);
+                        Cell ScuolaIdP=row3.createCell(2);
+                        Cell cellNomeSP = row1.createCell(3);
+                        Cell cellRegioneP = row1.createCell(4);
+                        Cell cellProvinciaP = row1.createCell(5);
+                        Cell cellCittaP = row1.createCell(6);
+                        Cell cellTipoP = row1.createCell(7);
+
                         cellNomeP.setCellValue(risultati.get(i).getAttivita().get(p).getPartecipanti().get(v).getNome());
                         cellCognomeP.setCellValue(risultati.get(i).getAttivita().get(p).getPartecipanti().get(v).getCognome());
                         ScuolaIdP.setCellValue(risultati.get(i).getScuola().getIdScuola());

@@ -1,20 +1,49 @@
 package com.example.PiattaformaPCTO_v2.Request;
 
+import com.example.PiattaformaPCTO_v2.collection.Professore;
+import com.example.PiattaformaPCTO_v2.collection.ProfessoreUnicam;
+import com.example.PiattaformaPCTO_v2.collection.Studente;
+import com.example.PiattaformaPCTO_v2.enumeration.Sede;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
 public class ActivityRequest {
     private String nome;
-    private String nomeScuola;
-    private String cittaScuola;
-private int anno;
+    private String tipo;
+    private String scuola;
 
-    public ActivityRequest(String nome ,int anno, String nomeScuola, String cittaScuola) {
+      private int anno;
+
+    private Sede sede;
+    //dd-MM-yyyy HH:mm
+    private LocalDateTime dataInizio;
+    private LocalDateTime dataFine;
+    private String descrizione;
+    /**
+     * professori unicam
+     */
+    private List<ProfessoreUnicam> profUnicam;
+    /**
+     * proffessore della scuola
+     */
+    private Professore profReferente;
+
+
+    public ActivityRequest(String nome, String tipo, String scuola, int anno, Sede sede,
+                           LocalDateTime dataInizio, LocalDateTime dataFine, String descrizione,
+                           List<ProfessoreUnicam> profUnicam, Professore profReferente) {
         this.nome = nome;
-        this.nomeScuola = nomeScuola;
-        this.cittaScuola = cittaScuola;
+        this.tipo = tipo;
+        this.scuola = scuola;
         this.anno = anno;
-
+        this.sede = sede;
+        this.dataInizio = dataInizio;
+        this.dataFine = dataFine;
+        this.descrizione = descrizione;
+        this.profUnicam = profUnicam;
+        this.profReferente = profReferente;
     }
-
-
 
     public int getAnno() {
         return anno;
@@ -25,31 +54,75 @@ private int anno;
     }
 
 
-
-
-
-
-    public String getNomeScuola() {
-        return nomeScuola;
-    }
-
-    public void setNomeScuola(String nomeScuola) {
-        this.nomeScuola = nomeScuola;
-    }
-
-    public String getCittaScuola() {
-        return cittaScuola;
-    }
-
-    public void setCittaScuola(String cittaScuola) {
-        this.cittaScuola = cittaScuola;
-    }
-
     public String getNome() {
         return nome;
     }
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
+    public String getScuola() {
+        return scuola;
+    }
+
+    public void setScuola(String scuola) {
+        this.scuola = scuola;
+    }
+
+    public Sede getSede() {
+        return sede;
+    }
+
+    public void setSede(Sede sede) {
+        this.sede = sede;
+    }
+
+    public LocalDateTime getDataInizio() {
+        return dataInizio;
+    }
+
+    public void setDataInizio(LocalDateTime dataInizio) {
+        this.dataInizio = dataInizio;
+    }
+
+    public LocalDateTime getDataFine() {
+        return dataFine;
+    }
+
+    public void setDataFine(LocalDateTime dataFine) {
+        this.dataFine = dataFine;
+    }
+
+    public String getDescrizione() {
+        return descrizione;
+    }
+
+    public void setDescrizione(String descrizione) {
+        this.descrizione = descrizione;
+    }
+
+    public List<ProfessoreUnicam> getProfUnicam() {
+        return profUnicam;
+    }
+
+    public void setProfUnicam(List<ProfessoreUnicam> profUnicam) {
+        this.profUnicam = profUnicam;
+    }
+
+    public Professore getProfReferente() {
+        return profReferente;
+    }
+
+    public void setProfReferente(Professore profReferente) {
+        this.profReferente = profReferente;
     }
 }
