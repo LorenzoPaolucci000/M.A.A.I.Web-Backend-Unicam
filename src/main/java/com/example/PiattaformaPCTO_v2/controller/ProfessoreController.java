@@ -41,11 +41,7 @@ public class ProfessoreController {
         return professoreService.save(professore);
     }
 
- /*   @RequestMapping(value="/createEmptyActivity")
-public void createEmptyActivity(@RequestParam("nome") String nome ,@RequestParam("anno") int anno,
-                          @RequestParam("scuola")String scuola,@RequestParam("cittaScuola")String cittaScuola)
-    {professoreService.createEmptyActivity(nome, anno, scuola, cittaScuola);}
-*/
+
 
 
 

@@ -10,5 +10,6 @@ import org.springframework.stereotype.Repository;
 public interface StudenteRepository extends MongoRepository<Studente,String> {
     @Query("{'nome': ?0,'cognome': ?1}")
     Studente findByNomeAndCognome(String nome, String cognome);
-
+    @Query("{'nome': ?0,'cognome': ?1,'email':?2}")
+    Studente findByNomeAndCognomeAndEmail(String nome,String cognome,String email);
 }

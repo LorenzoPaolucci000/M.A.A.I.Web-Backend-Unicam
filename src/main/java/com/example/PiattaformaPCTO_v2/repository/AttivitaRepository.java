@@ -15,4 +15,6 @@ public interface AttivitaRepository extends MongoRepository<Attivita, String> {
     List<Attivita> findByNomeAnno(String nome,int anno);
     @Query("{'nome': ?0,'annoAcc': ?1}")
     Attivita findByNomeAndAnno(String nome,int anno);
+    @Query("{'nome': ?0,'annoAcc': ?1,'iscrizionePossibile': ?2}")
+    Attivita findByNomeAndAnnoAndIscrizione(String nome,int anno,boolean iscrizione);
 }

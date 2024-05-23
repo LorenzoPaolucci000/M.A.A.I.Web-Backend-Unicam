@@ -78,4 +78,8 @@ public class Scuola {
     public String getTipo() {
         return tipo;
     }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
 }

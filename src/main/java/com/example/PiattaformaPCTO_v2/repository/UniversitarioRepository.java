@@ -9,8 +9,8 @@ import java.util.List;
 
 @Repository
 public interface UniversitarioRepository extends MongoRepository<Universitario, String> {
-    @Query("{'nome': ?0,'cognome': ?1,'comuneScuola':?2}")
-    Universitario findByNomeAndCognomeAndComuneScuola(String nome,String cognome,String citta);
+    @Query("{'nome': ?0,'cognome': ?1,'comuneScuola':?2,'scuolaProv' :{'$regex': ?3}}")
+    Universitario findByNomeAndCognomeAndComuneScuola(String nome,String cognome,String citta,String scuolaProv);
 
 
     @Query("{'nome': ?0,'cognome': ?1}")

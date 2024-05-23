@@ -2,9 +2,7 @@ package com.example.PiattaformaPCTO_v2.service;
 
 import com.example.PiattaformaPCTO_v2.collection.*;
 import com.example.PiattaformaPCTO_v2.enumeration.Sede;
-import com.example.PiattaformaPCTO_v2.repository.AttivitaRepository;
-import com.example.PiattaformaPCTO_v2.repository.ProfessoreRepository;
-import com.example.PiattaformaPCTO_v2.repository.ScuolaRepository;
+import com.example.PiattaformaPCTO_v2.repository.*;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -36,8 +34,10 @@ public class SimpleProfessoreService implements ProfessoreService{
     @Autowired
     private AttivitaRepository attivitaRepository;
 
-
-
+    @Autowired
+    private UniversitarioRepository universitarioRepository;
+    @Autowired
+    private RisultatiAttRepository risultatiAttRepository;
 
     @Override
     public String save(Professore professore) {
@@ -67,182 +67,53 @@ public class SimpleProfessoreService implements ProfessoreService{
     @Override
     public void createEmptyActivity(String nome, String tipo, String scuola, int anno,Sede sede, LocalDateTime dataInizio, LocalDateTime dataFine
             , String descrizione, List<ProfessoreUnicam> profUnicam, Professore profReferente) {
-        /*
-        String nome, String tipo, int annoAcc, List<Studente> studPartecipanti, Sede sede,
-                    LocalDateTime dataInizio, LocalDateTime dataFine, String descrizione,
-                    List<ProfessoreUnicam> profUnicam, Professore profReferente
-         */
-Attivita attivita=new Attivita(nome,tipo,anno,new ArrayList<>(),sede,dataInizio,dataFine,descrizione,profUnicam,profReferente);
-attivita.setIscrizione(true);
 
-attivitaRepository.save(attivita);
+      Attivita attivita=new Attivita(nome,tipo,anno,new ArrayList<>(),sede,dataInizio,dataFine,descrizione,profUnicam,profReferente,true);
+
+
+      attivitaRepository.save(attivita);
     }
 
 
-
-    public void processNewFile(Path filePath) {
-        // Implementa la logica per elaborare il file Excel
-        System.out.println("Processing new file: " + filePath.getFileName());
-
-        // Puoi aggiungere qui la logica per leggere e processare il file
-    }
 
 
 
     @Override
     public void uploadActivityDefinitively(String nome) throws IOException {
-        // Specifica il percorso del file
-        String percorsoFile = "src/main/resources/activity/"+nome+".xlsx";
-        int anno =Integer.parseInt( nome.substring(nome.length() - 4));
-
-        // Crea un oggetto File con il percorso specificato
-        File file = new File(percorsoFile);
-        FileInputStream input = new FileInputStream(file);
-        byte[] bytes = new byte[(int) file.length()];
-        input.read(bytes);
-        input.close();
-
-        // Crea il MultipartFile utilizzando MockMultipartFile
-        MultipartFile multipartFile = new MockMultipartFile("nomeFile", file.getName(), "text/plain", bytes);
-
-
-
-        if (file.exists()) {
-           attivitaService.uploadConAnno(multipartFile,anno,nome.substring(0,nome.length() - 4));
-            if (file.delete()) {
-                System.out.println("Il file è stato cancellato con successo.");
-            } else {
-                System.out.println("Impossibile cancellare il file.");
-            }
-
-        } else {
-            System.out.println("Il file non esiste.");
-        }
+        int anno =Integer.parseInt(nome.substring(nome.length() - 4));
+        String nomeA=nome.substring(0,nome.length() - 4);
+        List<Attivita> list=new ArrayList<>();
+        list.addAll(attivitaRepository.findAll());
+        Attivita attivita=attivitaRepository.findByNomeAndAnno(nomeA,anno);
+        list.remove(attivita);
+        attivitaRepository.deleteAll();
+        list.add(attivita);
+        attivita.setIscrizione(false);
+        attivitaRepository.saveAll(list);
+       createRisulataiAtt(attivita);
     }
 
-
     /**
-     * metodo che inserisce la prima riga di un file excel con tutte le informzioni sulle attivita
+     * metodo che crea la vista dei risultati di quella attività va a vedere gli studenti che sono diventati universitari
+     * @param attivita
      */
-    private void insertFirstRowOnFile(String nome, String tipo, String scuola, int anno,Sede sede, LocalDateTime dataInizio, LocalDateTime dataFine
-            , String descrizione,String filePath){
+    private void  createRisulataiAtt(Attivita attivita){
+        RisultatiAtt risultatiAtt=new RisultatiAtt();
+        risultatiAtt.setAnnoAcc(attivita.getAnnoAcc());
+        risultatiAtt.setAttivita(attivita.getNome());
+        List<Universitario> universitarioList=new ArrayList<>();
+for(int i=0;i<attivita.getStudPartecipanti().size();i++){
+    Studente stud=attivita.getStudPartecipanti().get(i);
+    Universitario universitario=universitarioRepository.findByNomeAndCognomeAndComuneScuola(stud.getNome(),stud.getCognome(),
+            stud.getScuola().getCitta(),stud.getScuola().getNome());
+    if(universitario!=null){
 
-        Workbook workbook = new XSSFWorkbook();
-        // Crea un foglio di lavoro
-        Sheet sheet0 = workbook.createSheet("Sheet0");
-        // Crea la prima riga
-        Row row = sheet0.createRow(0);
-        // Scrivi scuola nella prima colonna
-        Cell cellnome=row.createCell(0);
-        Cell celltipo=row.createCell(1);
-        Cell cellscuola=row.createCell(2);
-        Cell cellanno=row.createCell(3);
-        Cell cellsede=row.createCell(4);
-        Cell cellInizio=row.createCell(5);
-        Cell cellFine=row.createCell(6);
-        Cell cellDescrizione=row.createCell(7);
-        cellnome.setCellValue("Nome");
-        celltipo.setCellValue("Tipo");
-        cellscuola.setCellValue("Scuola");
-        cellanno.setCellValue("Anno");
-        cellsede.setCellValue("Sede");
-        cellInizio.setCellValue("DataInizio");
-        cellFine.setCellValue("DataFine");
-        cellDescrizione.setCellValue("descrizione");
-        Row row2 = sheet0.createRow(1);
-        Cell cellnome1=row2.createCell(0);
-        Cell celltipo1=row2.createCell(1);
-        Cell cellscuola1=row2.createCell(2);
-        Cell cellanno1=row2.createCell(3);
-        Cell cellsede1=row2.createCell(4);
-        Cell cellInizio1=row2.createCell(5);
-        Cell cellFine1=row2.createCell(6);
-        Cell cellDescrizione1=row2.createCell(7);
-        cellnome1.setCellValue(nome);
-        celltipo1.setCellValue(tipo);
-        cellscuola1.setCellValue(scuola);
-        cellanno1.setCellValue(anno);
-        cellsede1.setCellValue(sede.toString());
-        cellInizio1.setCellValue(dataInizio.toString());
-        cellFine1.setCellValue(dataFine.toString());
-        cellDescrizione1.setCellValue(descrizione);
-
-
-       try {
-            // Crea un file di output
-            FileOutputStream fileOut = new FileOutputStream(filePath);
-            // Scrivi il workbook su file
-            workbook.write(fileOut);
-            fileOut.close();
-            workbook.close();
-        } catch (IOException e) {
-            System.out.println("Si è verificato un errore durante la scrittura del file: " + e.getMessage());
-        }
-
+       risultatiAtt.addUniversitari(universitario);
+    }
 }
-    /**
-     * metodo che inserisce i professori nel file delle attività vuote
-     */
-    private void insertProfOnFile(List<ProfessoreUnicam>prof,Professore profReferente,String filePath,String attivita){
 
-        Workbook workbook = new XSSFWorkbook();
-        // Crea un foglio di lavoro
-        Sheet sheet = workbook.createSheet("Sheet1");
-        // Crea la prima riga
-        Row row = sheet.createRow(2);
-        // Scrivi scuola nella prima colonna
-        Cell cellemail=row.createCell(0);
-        Cell cellnome=row.createCell(1);
-        Cell cellcognome=row.createCell(2);
-        Cell cellattivita=row.createCell(3);
-        cellemail.setCellValue("EmailReferente");
-        cellnome.setCellValue("NomeReferente");
-        cellcognome.setCellValue("CognomeReferente");
-        cellattivita.setCellValue("AttivitàRefente");
-        Row row1 = sheet.createRow(3);
-        Cell cellemail1=row1.createCell(0);
-        Cell cellnome1=row1.createCell(1);
-        Cell cellcognome1=row1.createCell(2);
-        Cell cellattivita1=row1.createCell(3);
-        cellemail1.setCellValue(profReferente.getEmail());
-        cellnome1.setCellValue(profReferente.getNome());
-        cellcognome1.setCellValue(profReferente.getCognome());
-        cellattivita1.setCellValue(attivita);
-        int j=4;
-            for(int i=0;i<prof.size();i++){
-
-                Row row2 = sheet.createRow(j);
-                Cell cellemail2=row2.createCell(0);
-                Cell cellnome2=row2.createCell(1);
-                Cell cellcognome2=row2.createCell(2);
-                cellemail2.setCellValue("EmailProfUniversitario");
-                cellnome2.setCellValue("NomeProfUniversitario");
-                cellcognome2.setCellValue("CognomeProfUniversitario");
-                j++;
-                Row row3 = sheet.createRow(j);
-                Cell cellemail3=row3.createCell(0);
-                Cell cellnome3=row3.createCell(1);
-                Cell cellcognome3=row3.createCell(2);
-                cellemail3.setCellValue(prof.get(i).getEmail());
-                cellnome3.setCellValue(prof.get(i).getNome());
-                cellcognome3.setCellValue(prof.get(i).getCognome());
-
-            }
-
-
-        try {
-            // Crea un file di output
-            FileOutputStream fileOut = new FileOutputStream(filePath);
-            // Scrivi il workbook su file
-            workbook.write(fileOut);
-            fileOut.close();
-            workbook.close();
-        } catch (IOException e) {
-            System.out.println("Si è verificato un errore durante la scrittura del file: " + e.getMessage());
-        }
-
-    }
-
+risultatiAttRepository.save(risultatiAtt);
+}
 
 
     @Override

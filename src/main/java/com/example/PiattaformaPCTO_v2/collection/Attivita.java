@@ -46,7 +46,7 @@ public class Attivita {
      */
     private Professore profReferente;
 
-  private boolean iscrizionePossibile=false;
+  private boolean iscrizionePossibile;
   //la scuola potrebbe non esserci
 private String scuola;
     public Attivita(String nome,String tipo, int annoAcc, List<Studente> studPartecipanti) {
@@ -58,7 +58,7 @@ private String scuola;
 
     public Attivita(String nome, String tipo, int annoAcc, List<Studente> studPartecipanti, Sede sede,
                     LocalDateTime dataInizio, LocalDateTime dataFine, String descrizione,
-                    List<ProfessoreUnicam> profUnicam, Professore profReferente) {
+                    List<ProfessoreUnicam> profUnicam, Professore profReferente,boolean iscrizionePossibile) {
         this.nome = nome;
         this.tipo = tipo;
         this.annoAcc = annoAcc;
@@ -69,6 +69,7 @@ private String scuola;
         this.descrizione = descrizione;
         this.profUnicam = profUnicam;
         this.profReferente = profReferente;
+        this.iscrizionePossibile=iscrizionePossibile;
     }
     public void addStudente(Studente studente){
         this.studPartecipanti.add(studente);
@@ -142,5 +143,9 @@ private String scuola;
         hash = 31 * hash + Objects.hashCode(this.nome);
         hash = 31 * hash + Objects.hashCode(this.annoAcc);
         return hash;
+    }
+
+    public boolean iscrizionePossibile() {
+        return iscrizionePossibile;
     }
 }

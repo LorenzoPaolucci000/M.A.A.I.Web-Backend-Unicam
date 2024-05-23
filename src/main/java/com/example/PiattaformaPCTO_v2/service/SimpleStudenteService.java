@@ -32,12 +32,17 @@ public class SimpleStudenteService implements StudenteService{
 
         List<Attivita> list=new ArrayList<>();
         if(attivitaRepository.findByNomeAndAnno(nomeAttivita,anno)!=null){
+
             Attivita attivita=attivitaRepository.findByNomeAndAnno(nomeAttivita,anno);
             list.addAll(attivitaRepository.findAll());
-            System.out.println(list.contains(attivita));
+            attivitaRepository.deleteAll();
             list.remove(attivita);
-            attivita.addStudente(new Studente(email,cognome,nome,scuola));
-            studenteRepository.save(new Studente(email,cognome,nome,scuola));
+            if(!attivita.getStudPartecipanti().contains(new Studente(nome, cognome, email, scuola))) {
+                attivita.addStudente(new Studente(nome, cognome, email, scuola));
+            }
+            if(studenteRepository.findByNomeAndCognomeAndEmail(nome,cognome,email)==null) {
+                studenteRepository.save(new Studente( nome,cognome,email, scuola));
+            }
             list.add(attivita);
             attivitaRepository.saveAll(list);
         }
