@@ -12,9 +12,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProfessoreUnicam {
     @Id
+    private String email;
     private String nome;
     private String cognome;
-    private String email;
+
 
     public ProfessoreUnicam(String nome, String cognome, String email) {
         this.nome = nome;

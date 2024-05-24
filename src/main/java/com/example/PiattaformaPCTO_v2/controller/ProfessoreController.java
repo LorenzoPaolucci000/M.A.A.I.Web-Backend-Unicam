@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -94,6 +95,17 @@ System.out.println(activities.size());
         List<Professore> p = this.professoreService.getAllProf();
         return new ResponseEntity<>(p, HttpStatus.OK);
     }
+    @GetMapping("/getReferenti")
+    public ResponseEntity<List<String>> getProfVista() {
+        List<Professore> p = this.professoreService.getAllProf();
+        List<String> vista=new ArrayList<>();
+        for(int i=0;i<p.size();i++){
+            vista.add(p.get(i).getNome()+" "+p.get(i).getCognome()+" "+p.get(i).getEmail());
+        }
+        return new ResponseEntity<>(vista, HttpStatus.OK);
+    }
+
+
     @PostMapping("/uploadSingleProf")
     public void uploadSingleProf(@RequestBody UploadProfRequest prof ){
         professoreService.uploadSingleProf(prof.getEmail(),prof.getNome(),prof.getCognome(),prof.getScuolaImp(),prof.getAttivita());

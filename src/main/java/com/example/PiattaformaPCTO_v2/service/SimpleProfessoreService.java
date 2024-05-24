@@ -8,6 +8,12 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.data.mongodb.core.FindAndModifyOptions;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +44,8 @@ public class SimpleProfessoreService implements ProfessoreService{
     private UniversitarioRepository universitarioRepository;
     @Autowired
     private RisultatiAttRepository risultatiAttRepository;
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     @Override
     public String save(Professore professore) {
@@ -67,11 +75,12 @@ public class SimpleProfessoreService implements ProfessoreService{
     @Override
     public void createEmptyActivity(String nome, String tipo, String scuola, int anno,Sede sede, LocalDateTime dataInizio, LocalDateTime dataFine
             , String descrizione, List<ProfessoreUnicam> profUnicam, Professore profReferente) {
+if(attivitaRepository.findByNomeAnno(nome,anno)==null) {
+    Attivita attivita = new Attivita(nome, tipo, anno, new ArrayList<>(), sede, dataInizio, dataFine, descrizione, profUnicam, profReferente, true);
 
-      Attivita attivita=new Attivita(nome,tipo,anno,new ArrayList<>(),sede,dataInizio,dataFine,descrizione,profUnicam,profReferente,true);
 
-
-      attivitaRepository.save(attivita);
+    attivitaRepository.save(attivita);
+}
     }
 
 
@@ -82,14 +91,12 @@ public class SimpleProfessoreService implements ProfessoreService{
     public void uploadActivityDefinitively(String nome) throws IOException {
         int anno =Integer.parseInt(nome.substring(nome.length() - 4));
         String nomeA=nome.substring(0,nome.length() - 4);
-        List<Attivita> list=new ArrayList<>();
-        list.addAll(attivitaRepository.findAll());
         Attivita attivita=attivitaRepository.findByNomeAndAnno(nomeA,anno);
-        list.remove(attivita);
-        attivitaRepository.deleteAll();
-        list.add(attivita);
-        attivita.setIscrizione(false);
-        attivitaRepository.saveAll(list);
+        Query query = new Query();
+        query.addCriteria(Criteria.where("nome").is(nomeA).and("annoAcc").is(anno));
+        Update update = new Update();
+        update.set("iscrizionePossibile", false);
+        mongoTemplate.updateFirst(query, update, Attivita.class);
        createRisulataiAtt(attivita);
     }
 
@@ -111,7 +118,6 @@ for(int i=0;i<attivita.getStudPartecipanti().size();i++){
        risultatiAtt.addUniversitari(universitario);
     }
 }
-
 risultatiAttRepository.save(risultatiAtt);
 }
 
@@ -268,7 +274,7 @@ risultatiAttRepository.save(risultatiAtt);
 
     @Override
     public void uploadSingleProf(String email, String nome, String cognome, Scuola scuola, String attività) {
-        System.out.println(scuolaRepository.getScuolaById(scuola.getIdScuola())==null);
+
         if(professoreRepository.getProfByEmail(email)==null&&scuolaRepository.getScuolaById(scuola.getIdScuola())!=null){
             professoreRepository.save(new Professore(nome,cognome,email,scuola,attività));
         }
@@ -314,177 +320,7 @@ return professoreRepository.getProfessoreByNomeCognomeAttivita(nome,cognome,atti
         List<Professore> p = this.professoreRepository.findAll();
         return p;
     }
-/*
-    @Override
-    public String upload()  {
-        int counter = 0;
-        XSSFSheet regioni;
-        XSSFWorkbook wbRegioni = null;
-        try{
-            FileInputStream fisRegioni = new FileInputStream(new File("src/main/resources/comuni_regioni.xlsx"));
-            wbRegioni = new XSSFWorkbook(fisRegioni);
 
-        }catch(Exception e){}
-        regioni = wbRegioni.getSheetAt(0);
-        //file da dove prendo i dati
-        String[] files = new String[]{"Docenti_attivita.xlsx","Progetto-NERD-2021-2022.xlsx"};
-        Set<Professore> professori = new HashSet<Professore>();
-        //Docenti attivita
-        XSSFSheet sheet = null;
-        try{
-            FileInputStream fis = new FileInputStream(new File("src/main/resources/Docenti_attivita.xlsx"));
-            XSSFWorkbook wb = new XSSFWorkbook(fis);
-            sheet = wb.getSheetAt(0);
-
-        }catch(FileNotFoundException e){
-            System.out.println("Errore file non trovato !!");
-        } catch (IOException e) {
-            System.out.println("Errore Workbook!!");
-        }
-        for(Row row:sheet) {
-            String nome = "";
-            String cognome = "";
-            String email = "";
-            String scuolaImp = "";
-            String citta= "";
-            String attivita="";
-            for (int i=0; i<5;i++){
-                switch (i){
-                    case 0:
-                        attivita = row.getCell(0).getStringCellValue();
-                        break;
-                    case 1:
-                        try {
-                            String[] tmp = row.getCell(1).getStringCellValue().split(" ",2);
-                            if(tmp.length>1){
-                                nome = tmp[0];
-                                cognome = tmp[1];
-                            }else{
-                                nome = tmp[0];
-                            }
-                            if(Utilities.isEmail(nome))
-                                nome = "";
-                        }catch (NullPointerException e) {
-                            continue;
-                        }
-                        break;
-                    case 2:
-                        try {
-                            email = row.getCell(2).getStringCellValue();
-                            email = email.toLowerCase();
-                            if(!Utilities.isEmail(email)){
-                                email = "";
-                            }
-                        }catch (NullPointerException e) {
-                            continue;
-                        }
-                        break;
-                    case 3:
-                        try {
-                            scuolaImp = row.getCell(3).getStringCellValue();
-                            if(Utilities.isEmail(scuolaImp))
-                                scuolaImp = "";
-                        }catch (NullPointerException e) {
-                            continue;
-                        }
-                        break;
-                    case 4:
-                        try {
-                            citta = row.getCell(4).getStringCellValue();
-                            if(Utilities.isEmail(citta))
-                                citta = "";
-                        }catch (NullPointerException e) {
-                            continue;
-                        }
-                        break;
-                }
-            }
-
-            //Se nome o email sono vuote salto la riga
-            if (nome.isEmpty() || email.isEmpty())
-                continue;
-            //controllo presenza provincia
-            if(citta.contains("(")){
-                boolean open = false;
-
-                int cat = citta.length()-1;
-                int i = cat;
-                do{
-                    //rimuovo spazi vuoti in coda
-                    if(citta.charAt(cat)==' '){
-                        cat--;
-                        i--;
-                    }
-                    if(citta.charAt(cat)==')'){
-                        cat--;
-                        i--;
-                        open = true;
-                    }
-                    if(citta.charAt(cat)=='('){
-                        cat--;
-                        i--;
-                        open=false;
-                    }
-                    if(open){
-                        cat--;
-                        i--;
-                    }
-                    i--;
-                }while(i>=0);
-                citta = citta.substring(0,cat);
-                if(citta.length()>0){
-                    String low = citta.substring(1);
-                    char upper = citta.charAt(0);
-                    low = low.toLowerCase();
-                    upper = Character.toUpperCase(upper);
-                    citta = upper+low;
-                }
-            }
-            if(Utilities.isEmail(nome) && !Utilities.isEmail(email)){
-                String tmp = email;
-                email = nome;
-                nome = tmp;
-            }
-            Professore prof = new Professore(nome,cognome, email, findSchoolId(scuolaImp,citta),attivita);
-            //professori.add(prof);
-            this.save(prof);
-            counter++;
-        }
-        //Professore[] profs = professori.toArray(new Professore[professori.size()]);
-
-        return "Caricati "+counter+" professori";
-    }
-
-
-
-    private String findSchoolId(String scuola,String citta){
-        //converto tutto in maiuscolo
-        citta = citta.toUpperCase();
-        scuola = scuola.toUpperCase();
-        //Prendo le scuole che si trovano nella stessa citta
-        List<Scuola> scuole = scuolaRepository.getScuolaByCitta(citta);
-        if(scuole.size()==0){
-            scuole= scuolaRepository.findAll();
-        }
-            List<String> nomiScuole = new ArrayList<>();
-            for (Scuola s:scuole) {
-                nomiScuole.add(s.getNome());
-            }
-            ScuolaHelperService helper= new ScuolaHelperService();
-            String mostSimilarScuola = helper.findMostSimilarString(scuola,nomiScuole);
-            Iterator<Scuola> it = scuole.iterator();
-            while(it.hasNext()){
-                Scuola tmp = it.next();
-                if(tmp.getNome().equals(mostSimilarScuola))
-                    return tmp.getIdScuola();
-            }
-
-
-        return "";
-    }
-
-
-*/
    @Override
     public Sheet fileOpenerHelper(MultipartFile file) {
         try {

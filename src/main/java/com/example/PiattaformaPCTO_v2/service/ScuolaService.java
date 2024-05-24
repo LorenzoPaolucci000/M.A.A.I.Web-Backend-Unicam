@@ -30,5 +30,5 @@ void downloadAllSchhool(String nome,int anno);
      */
     ResponseEntity<Object> downloadFile(String name)throws FileNotFoundException;
 
-
+    List<String>getNomeAndCittaAnnoByScuola(String citta);
 }

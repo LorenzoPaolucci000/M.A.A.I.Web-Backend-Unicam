@@ -252,6 +252,18 @@ if(anno==0) {
                 .body(resource); // Imposta il corpo della risposta con il file
     }
 
+    @Override
+    public List<String> getNomeAndCittaAnnoByScuola(String citta) {
+        List<String> scuoleNome=new ArrayList<>();
+
+
+        List<Scuola> scuole=scuolaRepository.getScuolaByCitta(citta.toUpperCase());
+        for (Scuola scuola : scuole) {
+            scuoleNome.add(scuola.getNome());
+        }
+        return scuoleNome;
+    }
+
     private  void deleteFile(String filePath) {
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {

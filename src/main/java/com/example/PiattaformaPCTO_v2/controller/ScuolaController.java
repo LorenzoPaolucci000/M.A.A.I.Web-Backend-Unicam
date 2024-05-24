@@ -3,6 +3,7 @@ package com.example.PiattaformaPCTO_v2.controller;
 import com.example.PiattaformaPCTO_v2.Request.DeleteFileRequest;
 import com.example.PiattaformaPCTO_v2.collection.Scuola;
 import com.example.PiattaformaPCTO_v2.service.ScuolaService;
+import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -51,6 +52,12 @@ public class ScuolaController {
     public ResponseEntity<Object> downloadFile(@RequestBody DeleteFileRequest filerequest) throws FileNotFoundException {
         scuolaService.downloadAllSchhool(filerequest.getName(), filerequest.getAnno());
       return scuolaService.downloadFile(filerequest.getName());
+    }
+    @GetMapping("/scuoleCitta/{citta}")
+   public  ResponseEntity<List<String>> getScuoleByCitta(@PathVariable("citta") String citta){
+List<String> scuole=scuolaService.getNomeAndCittaAnnoByScuola(citta);
+
+        return new ResponseEntity<>(scuole, HttpStatus.OK);
     }
 
 

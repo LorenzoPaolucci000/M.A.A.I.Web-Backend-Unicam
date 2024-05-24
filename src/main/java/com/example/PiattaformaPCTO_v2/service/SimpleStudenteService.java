@@ -11,6 +11,10 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.io.FileInputStream;
@@ -26,27 +30,27 @@ public class SimpleStudenteService implements StudenteService{
     private StudenteRepository studenteRepository;
     @Autowired
     private AttivitaRepository attivitaRepository;
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     @Override
     public void addIscrizione(String nome, String cognome, String email, Scuola scuola, String nomeAttivita, int anno) {
 
-        List<Attivita> list=new ArrayList<>();
         if(attivitaRepository.findByNomeAndAnno(nomeAttivita,anno)!=null){
-
             Attivita attivita=attivitaRepository.findByNomeAndAnno(nomeAttivita,anno);
-            list.addAll(attivitaRepository.findAll());
-            attivitaRepository.deleteAll();
-            list.remove(attivita);
+            List<Studente> part=attivita.getStudPartecipanti();
+            Query query = new Query();
+            query.addCriteria(Criteria.where("nome").is(nomeAttivita).and("annoAcc").is(anno));
             if(!attivita.getStudPartecipanti().contains(new Studente(nome, cognome, email, scuola))) {
-                attivita.addStudente(new Studente(nome, cognome, email, scuola));
+                part.add(new Studente(nome, cognome, email, scuola));
             }
-            if(studenteRepository.findByNomeAndCognomeAndEmail(nome,cognome,email)==null) {
+            if(studenteRepository.findByEmail(email)==null) {
                 studenteRepository.save(new Studente( nome,cognome,email, scuola));
             }
-            list.add(attivita);
-            attivitaRepository.saveAll(list);
+            Update update = new Update();
+            update.set("studPartecipanti", part);
+            mongoTemplate.updateFirst(query, update, Attivita.class);
         }
-
 
     }
 
