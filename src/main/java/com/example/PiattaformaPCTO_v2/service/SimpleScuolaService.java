@@ -261,6 +261,7 @@ if(anno==0) {
         for (Scuola scuola : scuole) {
             scuoleNome.add(scuola.getNome());
         }
+
         return scuoleNome;
     }
 

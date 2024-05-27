@@ -15,4 +15,6 @@ public interface ProfessoreRepository extends MongoRepository<Professore,String>
     Professore getProfessoreByNomeCognomeAttivita(String nome,String cognome,String attivita);
     @Query("{'id': ?0}")
     Professore getProfByEmail(String id);
+    @Query("{'nome': ?0,'cognome': ?1}")
+    Professore getNomeCognome(String nome,String cognome);
 }

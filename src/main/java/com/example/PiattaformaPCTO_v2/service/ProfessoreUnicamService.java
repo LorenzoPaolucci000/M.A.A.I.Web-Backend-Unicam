@@ -26,4 +26,11 @@ public interface ProfessoreUnicamService {
 
     Sheet fileOpenerHelper(MultipartFile file);
 
+    /**
+     * metodo che data una lista di stringhe con 3 parametri nome,cognome,email, restituisce i prof unicam
+     * @param prof
+     * @return
+     */
+
+    List<ProfessoreUnicam> getProfByString(List<String> prof);
 }

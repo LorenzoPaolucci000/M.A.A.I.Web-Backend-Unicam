@@ -4,6 +4,7 @@ import com.example.PiattaformaPCTO_v2.collection.Attivita;
 import com.example.PiattaformaPCTO_v2.collection.Scuola;
 import com.example.PiattaformaPCTO_v2.collection.Studente;
 import com.example.PiattaformaPCTO_v2.repository.AttivitaRepository;
+import com.example.PiattaformaPCTO_v2.repository.ScuolaRepository;
 import com.example.PiattaformaPCTO_v2.repository.StudenteRepository;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -31,21 +32,27 @@ public class SimpleStudenteService implements StudenteService{
     @Autowired
     private AttivitaRepository attivitaRepository;
     @Autowired
+    private ScuolaRepository scuolaRepository;
+    @Autowired
     private MongoTemplate mongoTemplate;
 
     @Override
-    public void addIscrizione(String nome, String cognome, String email, Scuola scuola, String nomeAttivita, int anno) {
+    public void addIscrizione(String nome, String cognome, String email, String scuola, String nomeAttivita, int anno) {
 
-        if(attivitaRepository.findByNomeAndAnno(nomeAttivita,anno)!=null){
-            Attivita attivita=attivitaRepository.findByNomeAndAnno(nomeAttivita,anno);
+
+        Scuola scuolaP=scuolaRepository.getScuolaByNome(scuola);
+nomeAttivita=nomeAttivita.trim();
+
+        if(attivitaRepository.findByNomeAndAnnoAndIscrizione(nomeAttivita,anno,true)!=null){
+            Attivita attivita=attivitaRepository.findByNomeAnno(nomeAttivita,anno).get(0);
             List<Studente> part=attivita.getStudPartecipanti();
             Query query = new Query();
             query.addCriteria(Criteria.where("nome").is(nomeAttivita).and("annoAcc").is(anno));
-            if(!attivita.getStudPartecipanti().contains(new Studente(nome, cognome, email, scuola))) {
-                part.add(new Studente(nome, cognome, email, scuola));
+            if(!attivita.getStudPartecipanti().contains(new Studente(nome, cognome, email, scuolaP))) {
+                part.add(new Studente(nome, cognome, email, scuolaP));
             }
             if(studenteRepository.findByEmail(email)==null) {
-                studenteRepository.save(new Studente( nome,cognome,email, scuola));
+                studenteRepository.save(new Studente( nome,cognome,email, scuolaP));
             }
             Update update = new Update();
             update.set("studPartecipanti", part);

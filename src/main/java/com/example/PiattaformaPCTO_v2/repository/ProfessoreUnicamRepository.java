@@ -12,4 +12,6 @@ public interface ProfessoreUnicamRepository extends MongoRepository<ProfessoreUn
 
     @Query("{'id': ?0}")
     ProfessoreUnicam getProfByEmail(String id);
+    @Query("{'nome':?0,'cognome':?1}")
+    ProfessoreUnicam getByNomeCognome(String nome,String cognome);
 }

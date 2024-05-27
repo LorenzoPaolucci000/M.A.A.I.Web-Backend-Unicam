@@ -6,7 +6,9 @@ import com.example.PiattaformaPCTO_v2.Request.DeleteFileRequest;
 import com.example.PiattaformaPCTO_v2.Request.UploadDefinitively;
 import com.example.PiattaformaPCTO_v2.Request.UploadProfRequest;
 import com.example.PiattaformaPCTO_v2.collection.Professore;
+import com.example.PiattaformaPCTO_v2.collection.ProfessoreUnicam;
 import com.example.PiattaformaPCTO_v2.service.ProfessoreService;
+import com.example.PiattaformaPCTO_v2.service.ProfessoreUnicamService;
 import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -36,6 +38,8 @@ public class ProfessoreController {
 
     @Autowired
     private ProfessoreService professoreService;
+    @Autowired
+    private ProfessoreUnicamService professoreUnicamService;
 
     @PostMapping
     public String save(@RequestBody Professore professore){
@@ -50,8 +54,11 @@ public class ProfessoreController {
     public void createEmptyActivity1(@RequestBody ActivityRequest create)
     {
 
+List<ProfessoreUnicam> prof=professoreUnicamService.getProfByString(create.getProfUnicam());
+Professore profReferente=professoreService.getProfByString(create.getProfReferente());
+
         professoreService.createEmptyActivity(create.getNome(), create.getTipo(), create.getScuola(),create.getAnno(),
-               create.getSede(), create.getDataInizio(),create.getDataFine(),create.getDescrizione(),create.getProfUnicam(),create.getProfReferente());}
+               create.getSede(), create.getDataInizio(),create.getDataFine(),create.getDescrizione(),prof,profReferente);}
 
 
     /**
@@ -68,7 +75,7 @@ public class ProfessoreController {
     @GetMapping("/getPendingActivities")
         public ResponseEntity<List<String>> getActivities(){
         List<String> activities=professoreService.getAllPendingActivities();
-System.out.println(activities.size());
+
         return new ResponseEntity<>(activities, HttpStatus.OK);
     }
 

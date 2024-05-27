@@ -8,9 +8,9 @@ public class IscrizioneRequest {
    private String email;
    private String nomeAttivita;
    private int anno;
-   private Scuola scuola;
+   private String scuola;
 
-    public IscrizioneRequest(String nome, String cognome, String email, String nomeAttivita, int anno,Scuola scuola) {
+    public IscrizioneRequest(String nome, String cognome, String email, String nomeAttivita, int anno,String scuola) {
         this.nome = nome;
         this.cognome = cognome;
         this.email = email;
@@ -49,7 +49,7 @@ public class IscrizioneRequest {
         return  email;
     }
 
-    public Scuola getScuola() {
+    public String getScuola() {
         return scuola;
     }
 }

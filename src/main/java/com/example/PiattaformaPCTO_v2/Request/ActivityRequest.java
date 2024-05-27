@@ -23,16 +23,16 @@ public class ActivityRequest {
     /**
      * professori unicam
      */
-    private List<ProfessoreUnicam> profUnicam;
+    private List<String> profUnicam;
     /**
      * proffessore della scuola
      */
-    private Professore profReferente;
+    private String profReferente;
 
 
     public ActivityRequest(String nome, String tipo, String scuola, int anno, Sede sede,
                            LocalDateTime dataInizio, LocalDateTime dataFine, String descrizione,
-                           List<ProfessoreUnicam> profUnicam, Professore profReferente) {
+                           List<String> profUnicam, String profReferente) {
         this.nome = nome;
         this.tipo = tipo;
         this.scuola = scuola;
@@ -110,19 +110,19 @@ public class ActivityRequest {
         this.descrizione = descrizione;
     }
 
-    public List<ProfessoreUnicam> getProfUnicam() {
+    public List<String> getProfUnicam() {
         return profUnicam;
     }
 
-    public void setProfUnicam(List<ProfessoreUnicam> profUnicam) {
+    public void setProfUnicam(List<String> profUnicam) {
         this.profUnicam = profUnicam;
     }
 
-    public Professore getProfReferente() {
+    public String getProfReferente() {
         return profReferente;
     }
 
-    public void setProfReferente(Professore profReferente) {
+    public void setProfReferente(String profReferente) {
         this.profReferente = profReferente;
     }
 }

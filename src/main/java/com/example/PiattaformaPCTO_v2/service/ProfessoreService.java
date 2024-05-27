@@ -74,4 +74,10 @@ public interface ProfessoreService {
      * metodo che permette di fare upload di un singolo professore
      */
     void uploadSingleProf(String email, String nome, String cognome, Scuola scuola,String attività);
+    /**
+     * metodo che data una string con 3 parametri nome,cognome,email, restituisce il professore associato
+     * @param prof
+     * @return
+     */
+    Professore getProfByString(String prof);
 }

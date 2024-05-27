@@ -75,8 +75,11 @@ public class SimpleProfessoreService implements ProfessoreService{
     @Override
     public void createEmptyActivity(String nome, String tipo, String scuola, int anno,Sede sede, LocalDateTime dataInizio, LocalDateTime dataFine
             , String descrizione, List<ProfessoreUnicam> profUnicam, Professore profReferente) {
-if(attivitaRepository.findByNomeAnno(nome,anno)==null) {
+
+if(attivitaRepository.findByNomeAnno(nome,anno).isEmpty()) {
     Attivita attivita = new Attivita(nome, tipo, anno, new ArrayList<>(), sede, dataInizio, dataFine, descrizione, profUnicam, profReferente, true);
+
+    attivita.setScuola(scuola);
 
 
     attivitaRepository.save(attivita);
@@ -89,8 +92,8 @@ if(attivitaRepository.findByNomeAnno(nome,anno)==null) {
 
     @Override
     public void uploadActivityDefinitively(String nome) throws IOException {
-        int anno =Integer.parseInt(nome.substring(nome.length() - 4));
-        String nomeA=nome.substring(0,nome.length() - 4);
+        int anno =Integer.parseInt(nome.substring(nome.indexOf(" ")+1,nome.length()));
+        String nomeA=nome.substring(0,nome.indexOf(" "));
         Attivita attivita=attivitaRepository.findByNomeAndAnno(nomeA,anno);
         Query query = new Query();
         query.addCriteria(Criteria.where("nome").is(nomeA).and("annoAcc").is(anno));
@@ -151,30 +154,14 @@ risultatiAttRepository.save(risultatiAtt);
 
 
     public List<String> getAllPendingActivities() {
-        // Recupera la lista delle attività pendenti dalla directory monitorata
-        List<String> classNames = new ArrayList<>();
-        try {
-
-            Path directoryPath = Paths.get("src/main/resources/activity/");
-            File directory = directoryPath.toFile();
-            if (directory.exists() && directory.isDirectory()) {
-                File[] files = directory.listFiles();
-                if (files != null) {
-                    for (File file : files) {
-                        if (file.isFile()) {
-                            String fileName = file.getName();
-                            if (fileName.endsWith(".xlsx")) {
-                                String className = fileName.substring(0, fileName.lastIndexOf('.'));
-                                classNames.add(className);
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        // Recupera la lista delle attività pendenti
+        List<String> activity = new ArrayList<>();
+        List<Attivita> activityPending=attivitaRepository.findByIscrizione(true);
+        for(int i=0;i<activityPending.size();i++){
+            activity.add(activityPending.get(i).getNome()+" "+activityPending.get(i).getAnnoAcc());
         }
-        return classNames;
+   return activity;
+
     }
 
 
@@ -280,6 +267,29 @@ risultatiAttRepository.save(risultatiAtt);
         }
     }
 
+    @Override
+    public Professore getProfByString(String prof) {
+        Professore profReferente;
+        List<String> parametri=separa(prof);
+        return professoreRepository.getNomeCognome(parametri.get(0),parametri.get(1));
+    }
+
+    private List<String> separa(String s) {
+        List<String> parole=new ArrayList<>();
+        for(int i=0;i<3;i++) {
+            String p=s;
+            if(i<2) {
+                parole.add(s.substring(0, s.indexOf(" ")));
+            }
+            else{
+                parole.add(s);
+            }
+            s = s.substring(s.indexOf(" ")+1,s.length());
+
+        }
+
+        return parole;
+    }
 
     /**
      * metodo che elimina il file scaricato dal filesystem

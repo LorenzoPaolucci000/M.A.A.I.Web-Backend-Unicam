@@ -66,7 +66,7 @@ List<String> scuole=scuolaService.getNomeAndCittaAnnoByScuola(citta);
     @GetMapping("/visua")
     public ResponseEntity<List<Scuola>> visualizza(){
         List<Scuola> s = this.scuolaService.getScuole();
-        return new ResponseEntity<List<Scuola>>(s, HttpStatus.OK);
+        return new ResponseEntity<>(s, HttpStatus.OK);
     }
 
 

@@ -13,6 +13,6 @@ public interface StudenteService {
      * @param nomeAttivita
      * @param anno
      */
-    void addIscrizione(String nome, String cognome, String email, Scuola scuola,String nomeAttivita, int anno);
+    void addIscrizione(String nome, String cognome, String email, String scuola,String nomeAttivita, int anno);
     String save(Studente studente);
 }

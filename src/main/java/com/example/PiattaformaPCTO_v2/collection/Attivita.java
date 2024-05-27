@@ -148,4 +148,8 @@ private String scuola;
     public boolean iscrizionePossibile() {
         return iscrizionePossibile;
     }
+
+    public void setScuola(String scuola) {
+        this.scuola = scuola;
+    }
 }

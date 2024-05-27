@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -72,5 +73,36 @@ public class SimpleProfessoreUnicamService implements ProfessoreUnicamService {
         } catch (IOException | InvalidFormatException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public List<ProfessoreUnicam> getProfByString(List<String> prof) {
+        List<ProfessoreUnicam> professoreUnicam=new ArrayList<>();
+
+        for(int i=0;i< prof.size();i++){
+            List<String> s=separa(prof.get(i));
+            if(professoreUnicamRepository.getByNomeCognome(s.get(0),s.get(1))!=null){
+
+                professoreUnicam.add(professoreUnicamRepository.getByNomeCognome(s.get(0),s.get(1)));
+            }
+        }
+        return professoreUnicam;
+    }
+
+    private List<String> separa(String s) {
+        List<String> parole=new ArrayList<>();
+        for(int i=0;i<3;i++) {
+           String p=s;
+           if(i<2) {
+               parole.add(s.substring(0,s.indexOf(" ")));
+           }
+           else{
+               parole.add(s);
+           }
+            s = s.substring(s.indexOf(" ")+1,s.length());
+
+        }
+
+        return parole;
     }
 }
