@@ -27,10 +27,7 @@ public class RisultatiController {
     @Autowired
     private RisultatiService risultatiService;
 
-    @PostMapping("/crea")
-    public void crea(){
-        risultatiService.crea();
-    }
+
 
     @RequestMapping("/createStudentsFromActivities")
     public void createStudentsFromActivities(){

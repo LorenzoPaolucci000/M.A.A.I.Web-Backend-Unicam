@@ -14,7 +14,7 @@ public class Presenza {
 
     private List<Studente> partecipanti;
 
-    private List<Studente> iscritti;
+    private List<Universitario> iscritti;
 
 
     public Presenza(String nomeAttivita) {
@@ -24,11 +24,13 @@ public class Presenza {
     }
 
 
+public void addPartecipanti(List<Studente> studenti){
+        this.partecipanti.addAll(studenti);
+}
 
-    public void nuovoIscritto(Studente s){
-        this.iscritti.add(s);
+    public void addIscritti(List<Universitario> iscritti){
+        this.iscritti.addAll(iscritti);
     }
-
     public String getNomeAttivita() {
         return nomeAttivita;
     }
@@ -37,7 +39,7 @@ public class Presenza {
         return partecipanti;
     }
 
-    public List<Studente> getIscritti() {
+    public List<Universitario> getIscritti() {
         return iscritti;
     }
 }

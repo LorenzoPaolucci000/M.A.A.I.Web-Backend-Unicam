@@ -15,4 +15,6 @@ public interface RisultatiAttRepository extends MongoRepository <RisultatiAtt,St
     List<RisultatiAtt> findByNomeAndAnno(String nome,int anno);
     @Query("{'annoAcc': ?0}")
     List<RisultatiAtt> findbyAnno(int anno);
+    @Query("{'attivita':?0}")
+   List<RisultatiAtt>  findbyNomeAttivita(String nomeAttivita);
 }

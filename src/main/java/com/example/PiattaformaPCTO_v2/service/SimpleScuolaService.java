@@ -183,26 +183,7 @@ if(anno==0) {
 
                     }
               }
-            //cicla gli iscritti
-              for(int c=0;c<risultati.get(i).getIscritti().size();c++){
-                  Row row4 = sheet.createRow(j);
-                  Cell cellIdU = row4.createCell(0);
-                  Cell cellNomeU = row4.createCell(1);
-                  Cell cellCognomeU = row4.createCell(2);
-                  Cell annoImU = row4.createCell(3);
-                  Cell corsoU=row4.createCell(4);
-                  Cell comuneU = row4.createCell(5);
-                  Cell scuolaU = row4.createCell(6);
 
-                  cellIdU.setCellValue(risultati.get(i).getIscritti().get(c).getMatricola());
-                  cellNomeU.setCellValue(risultati.get(i).getIscritti().get(c).getNome());
-                  cellCognomeU.setCellValue(risultati.get(i).getIscritti().get(c).getCognome());
-                  annoImU.setCellValue(risultati.get(i).getIscritti().get(c).getAnnoImm());
-                 corsoU.setCellValue(risultati.get(i).getIscritti().get(c).getCorso());
-                  comuneU.setCellValue(risultati.get(i).getIscritti().get(c).getComuneScuola());
-                  scuolaU.setCellValue(risultati.get(i).getIscritti().get(c).getScuolaProv());j++;
-
-              }
         }
 
 

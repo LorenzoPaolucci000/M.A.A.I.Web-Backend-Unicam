@@ -19,20 +19,18 @@ public class Risultati {
 
     private List<Presenza> attivita;
 
-    private List<Universitario> iscritti;
+
 
     public Risultati(int annoAcc, Scuola scuola) {
         this.annoAcc = annoAcc;
         this.scuola = scuola;
         this.attivita=new ArrayList<>(10000);
-        this.iscritti=new ArrayList<>();
+
     }
 
 
 
-    public void nuovoIscritto(Universitario studente){
-        this.iscritti.add(studente);
-    }
+
 
     public int getAnnoAcc() {
         return annoAcc;
@@ -46,7 +44,7 @@ public class Risultati {
         return attivita;
     }
 
-    public List<Universitario> getIscritti() {
-        return iscritti;
-    }
+       public void addAttivita(Presenza presenza){
+        this.attivita.add(presenza);
+}
 }

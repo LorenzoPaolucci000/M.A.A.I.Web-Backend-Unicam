@@ -12,4 +12,6 @@ import java.util.List;
 public interface RisultatiRepository extends MongoRepository<Risultati,String> {
     @Query("{'annoAcc': ?0}")
     List<Risultati> findbyAnno(int anno);
+    @Query("{'scuola._id': ?0}")
+    List<Risultati> findByScuolaId(String scuolaId);
 }

@@ -45,6 +45,8 @@ public class SimpleProfessoreService implements ProfessoreService{
     @Autowired
     private RisultatiAttRepository risultatiAttRepository;
     @Autowired
+    private RisultatiRepository risultatiRepository;
+    @Autowired
     private MongoTemplate mongoTemplate;
 
     @Override
@@ -101,7 +103,54 @@ if(attivitaRepository.findByNomeAnno(nome,anno).isEmpty()) {
         update.set("iscrizionePossibile", false);
         mongoTemplate.updateFirst(query, update, Attivita.class);
        createRisulataiAtt(attivita);
+       createRisultati(attivita);
     }
+
+    /**
+     * metodo che da un attività crea la vista sulle scuola
+     * @param attivita
+     */
+    private void createRisultati(Attivita attivita){
+        Presenza presenza=createPresenza(attivita);
+
+        //se l'attività ha una scuola in cui si è svolta
+        if(!attivita.getScuola().equals("")){
+            Scuola scuola=scuolaRepository.getScuolaByNome(attivita.getScuola());
+            Query query = new Query();
+            query.addCriteria(Criteria.where("scuola").is(scuola));
+            //se la scuola non ha altre attività fatte creao un nuovo risultati
+            if(query.toString().equals("")) {
+                Risultati risultato = new Risultati(attivita.getAnnoAcc(), scuola);
+                risultato.addAttivita(presenza);
+                risultatiRepository.save(risultato);
+                System.out.println(risultatiRepository.findAll().size());
+            }
+            else{
+                List<Presenza> presenze=risultatiRepository.findByScuolaId(scuola.getIdScuola()).get(0).getAttivita();
+                presenze.add(presenza);
+                Query query1 = new Query();
+                query1.addCriteria(Criteria.where("scuola").is(scuola));
+                Update update = new Update();
+                update.set("attivita", presenze);
+                mongoTemplate.updateFirst(query1, update, Risultati.class);
+            }
+        }
+    }
+
+    /**
+     * metodo che crea la presenza
+     * @param attivita
+     */
+    private Presenza createPresenza(Attivita attivita) {
+      List<Universitario> universitari=risultatiAttRepository.findbyNomeAttivita(attivita.getNome()).get(0).getUniversitarii();
+      Presenza presenza=new Presenza(attivita.getNome());
+      presenza.addPartecipanti(attivita.getStudPartecipanti());
+      presenza.addIscritti(universitari);
+      return presenza;
+
+
+    }
+
 
     /**
      * metodo che crea la vista dei risultati di quella attività va a vedere gli studenti che sono diventati universitari
@@ -114,10 +163,8 @@ if(attivitaRepository.findByNomeAnno(nome,anno).isEmpty()) {
         List<Universitario> universitarioList=new ArrayList<>();
 for(int i=0;i<attivita.getStudPartecipanti().size();i++){
     Studente stud=attivita.getStudPartecipanti().get(i);
-    Universitario universitario=universitarioRepository.findByNomeAndCognomeAndComuneScuola(stud.getNome(),stud.getCognome(),
-            stud.getScuola().getCitta(),stud.getScuola().getNome());
+    Universitario universitario=universitarioRepository.findByNomeAndCognome(stud.getNome(),stud.getCognome());
     if(universitario!=null){
-
        risultatiAtt.addUniversitari(universitario);
     }
 }

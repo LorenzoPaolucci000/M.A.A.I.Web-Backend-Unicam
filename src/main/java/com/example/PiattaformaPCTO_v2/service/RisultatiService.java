@@ -9,10 +9,10 @@ import java.io.FileNotFoundException;
 import java.util.List;
 
 public interface RisultatiService {
-    void crea();
 
 
-    void risultatiInf(List<Attivita> attivita, List<Risultati> risultati);
+
+
 
 
     void createStudentsFromActivities();
