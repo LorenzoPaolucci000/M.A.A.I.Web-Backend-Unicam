@@ -1,5 +1,6 @@
 package com.example.PiattaformaPCTO_v2.controller;
 
+import com.example.PiattaformaPCTO_v2.Request.DeleteFileRequest;
 import com.example.PiattaformaPCTO_v2.Request.UploadProfUnicamRequest;
 import com.example.PiattaformaPCTO_v2.collection.Professore;
 import com.example.PiattaformaPCTO_v2.collection.ProfessoreUnicam;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,5 +46,17 @@ public class ProfUnicamController {
     public void uploadSingleProf(@RequestBody UploadProfUnicamRequest prof ){
         professoreUnicamService.uploadSingleProf(prof.getNome(),prof.getCognome(),prof.getEmail());
     }
+    @GetMapping("/get")
+    public ResponseEntity<List<ProfessoreUnicam>> getProf() {
 
+        List<ProfessoreUnicam> p = this.professoreUnicamService.getAllProf();
+
+        return new ResponseEntity<>(p, HttpStatus.OK);
+    }
+
+    @PostMapping("/download")
+    public ResponseEntity<Object> downloadFile(@RequestBody DeleteFileRequest filerequest) throws FileNotFoundException {
+        professoreUnicamService.downloadAllProfOnFile(filerequest.getName());
+        return professoreUnicamService.downloadFile(filerequest.getName());
+    }
 }

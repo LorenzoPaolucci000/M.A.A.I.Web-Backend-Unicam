@@ -5,28 +5,31 @@ import com.example.PiattaformaPCTO_v2.collection.Scuola;
 
 public class UploadProfRequest {
 
-    private String email;
+
 
     private String nome;
     private String cognome;
-    private Scuola scuolaImp;
+    private String email;
+    private String scuola;
+    private String citta;
     private String attivita;
 
-    public UploadProfRequest(String nome, String cognome,String email, Scuola scuolaImp,String attivita){
+    public UploadProfRequest(String nome, String cognome,String email, String scuola,String citta,String attivita){
         this.nome = nome;
         this.cognome = cognome;
         this.email = email;
-        this.scuolaImp = scuolaImp;
+        this.scuola = scuola;
+        this.citta=citta;
         this.attivita = attivita;
     }
 public UploadProfRequest(){
 
 }
     public String toString(){
-        return "Nome:"+this.nome+"; Email: "+this.email+"; Scuola: "+this.scuolaImp;
+        return "Nome:"+this.nome+"; Email: "+this.email+"; Scuola: "+this.scuola;
     }
     public String toJson(){
-        return "{nome:"+this.nome+";email:"+this.email+";scuolaImp:"+this.scuolaImp+"}";
+        return "{nome:"+this.nome+";email:"+this.email+";scuolaImp:"+this.scuola+"}";
     }
     public boolean equals(Professore prof){
         if(prof.getEmail().equals(this.getEmail()) ){
@@ -63,12 +66,15 @@ public UploadProfRequest(){
         return cognome;
     }
 
-    public Scuola getScuolaImp() {
-        return scuolaImp;
+    public String getScuola() {
+        return scuola;
     }
 
     public String getAttivita() {
         return attivita;
     }
 
+    public String getCitta() {
+        return citta;
+    }
 }

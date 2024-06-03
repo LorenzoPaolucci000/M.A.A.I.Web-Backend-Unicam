@@ -135,7 +135,10 @@ if(anno==0) {
             // Creazione della prima riga
             Row row = sheet.createRow(j);
             Cell annoAc = row.createCell(0);
-
+            annoAc.setCellValue("Anno Accademico");j++;
+            Row row0 = sheet.createRow(j);
+            Cell annoAc0 = row0.createCell(0);
+            annoAc0.setCellValue(risultati.get(i).getAnnoAcc());
             j++;
             Row row1 = sheet.createRow(j);
             Cell ScuolaId=row1.createCell(0);
@@ -144,8 +147,8 @@ if(anno==0) {
             Cell cellProvincia = row1.createCell(3);
             Cell cellCitta = row1.createCell(4);
             Cell cellTipo = row1.createCell(5);
-            // Impostazione dei valori delle celle
-            annoAc.setCellValue(risultati.get(i).getAnnoAcc());
+
+
             ScuolaId.setCellValue(risultati.get(i).getScuola().getIdScuola());
             cellNome.setCellValue(risultati.get(i).getScuola().getNome());
             cellRegione.setCellValue(risultati.get(i).getScuola().getRegione());

@@ -119,15 +119,13 @@ public class SimpleRisultatiService implements RisultatiService {
 
         for (int i = 0; i< risultati.size(); i++) {
             Row row0 = sheet.createRow(j);
-            row0.createCell(0).setCellValue("Attività");
-            row0.createCell(1).setCellValue("Anno");
+            Cell cellAtt0 = row0.createCell(0);
+            row0.createCell(0).setCellValue("Anno");
             j++;
 
             Row row = sheet.createRow(j);
-            Cell cellAtt = row.createCell(0);
-            Cell cellAnno = row.createCell(1);
+            Cell cellAnno = row.createCell(0);
             // Impostazione dei valori delle celle
-            cellAtt.setCellValue(risultati.get(i).getAttivita());
             cellAnno.setCellValue(risultati.get(i).getAnnoAcc());j++;
             // Creazione della prima riga
             Row row01 = sheet.createRow(j);

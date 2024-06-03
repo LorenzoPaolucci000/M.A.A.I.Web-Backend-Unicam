@@ -1,10 +1,13 @@
 package com.example.PiattaformaPCTO_v2.service;
 
+import com.example.PiattaformaPCTO_v2.collection.Professore;
 import com.example.PiattaformaPCTO_v2.collection.ProfessoreUnicam;
 import com.example.PiattaformaPCTO_v2.collection.Scuola;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
 public interface ProfessoreUnicamService {
@@ -33,4 +36,14 @@ public interface ProfessoreUnicamService {
      */
 
     List<ProfessoreUnicam> getProfByString(List<String> prof);
+    /**
+     * metodo che scarica un file excel in cui mette tutti i prof presenti
+     */
+    void downloadAllProfOnFile(String filename);
+
+
+    /**
+     * metodo che si occupa di  scaricare  il file precedentemente creato
+     */
+    ResponseEntity<Object> downloadFile(String name)throws FileNotFoundException;
 }

@@ -2,6 +2,7 @@ package com.example.PiattaformaPCTO_v2.service;
 
 import com.example.PiattaformaPCTO_v2.collection.*;
 import com.example.PiattaformaPCTO_v2.dto.ActivityViewDTOPair;
+import com.example.PiattaformaPCTO_v2.enumeration.Sede;
 import com.example.PiattaformaPCTO_v2.repository.*;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
@@ -13,12 +14,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -47,50 +50,15 @@ public class SimpleAttivitaService implements AttivitaService {
     private ImmatricolazioniRepository immatricolazioniRepository;
     @Autowired
     private StudenteRepository studenteRepository;
+    @Autowired
+    private RisultatiAttRepository risultatiAttRepository;
+    @Autowired
+    private RisultatiRepository risultatiRepository;
     @Override
     public String save(Attivita attivita) {
         return attivitaRepository.save(attivita).getNome();
     }
 
-/*
-    @Override
-    public void upload() {
-        String filePath = "src/main/resources/Progetto-NERD-2021-2022.xlsx";
-        System.out.println(filePath);
-        try {
-            FileInputStream excel = new FileInputStream(new File(filePath));
-            File file = new File(filePath);
-            String name = FilenameUtils.removeExtension(file.getName());
-            Attivita attivita = new Attivita("PROGETTO_NERD_4043","PROGETTO_NERD", 4043, new ArrayList<>());
-            System.out.println(filePath);
-            Workbook workbook = new XSSFWorkbook(excel);
-            Sheet dataSheet = workbook.getSheetAt(0);
-            Iterator<Row> iterator = dataSheet.rowIterator();
-            iterator.next();
-            while (iterator.hasNext()) {
-                Row riga = iterator.next();
-                if (riga.getCell(3) != null) {
-                   //Scuola scuola = scuolaRepository.getScuolaByNome(riga.getCell(8).getStringCellValue());
-                    Scuola scuola = scuolaRepository.getScuolaById(riga.getCell(8).getStringCellValue());
-                    if (scuola != null) {
-                        String nome = riga.getCell(3).getStringCellValue();
-                        String cognome = riga.getCell(4).getStringCellValue();
-                        String id = nome + cognome + scuola.getNome();
-                        Studente stud = new Studente(id, nome, cognome, scuola);
-                        System.out.println(stud);
-                        attivita.getStudPartecipanti().add(stud);
-
-                        System.out.println(attivita.getStudPartecipanti().size());
-                    }
-
-                }
-            }
-            System.out.println(this.save(attivita));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-*/
     public void uploadConAnno(MultipartFile file,int anno,String name){
 
 
@@ -197,476 +165,7 @@ System.out.println(attivita.getNome());
     }
 
 
-/*
-    //file path
-    @Override
-    public void uploadSummer() {
-        String filePath = "src/main/resources/SummerSchoolSTEMPartecipanti.xlsx";
-        System.out.println(filePath);
-        try {
-            FileInputStream excel = new FileInputStream(new File(filePath));
-            File file = new File(filePath);
-            String name = FilenameUtils.removeExtension(file.getName());
-            Attivita attivita = new Attivita("SUMMER_SCHOOL_4043","SUMMER_SCHOOL_STEM", 4043, new ArrayList<>());
-            Workbook workbook = new XSSFWorkbook(excel);
-            Sheet dataSheet = workbook.getSheetAt(0);
-            Iterator<Row> iterator = dataSheet.rowIterator();
-            iterator.next();
-            while (iterator.hasNext()) {
-                Row riga = iterator.next();
-                if (riga.getCell(1) != null) {
-                    Scuola scuola = scuolaRepository.getScuolaById(riga.getCell(4).getStringCellValue());
-                    if (scuola != null) {
-                        //System.out.println(scuola.toString());
-                        //System.out.println(riga.getCell(1).getStringCellValue());
-                        String nome = riga.getCell(1).getStringCellValue();
-                        String cognome = riga.getCell(2).getStringCellValue();
-                        String id = nome + cognome + scuola.getNome();
-                        Studente stud = new Studente(id, nome, cognome, scuola);
-                        //System.out.println(stud.toString());
-                        attivita.getStudPartecipanti().add(stud);
-                    }
-                }
-            }
-            System.out.println(this.save(attivita));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
 
-    }
-
-
-    //file path
-    @Override
-    public void uploadCartel() {
-        String filePath = "src/main/resources/Cartel1.xlsx";
-        System.out.println(filePath);
-        try {
-            FileInputStream excel = new FileInputStream(new File(filePath));
-            File file = new File(filePath);
-            String name = FilenameUtils.removeExtension(file.getName());
-            Attivita attivita = new Attivita("PCTO_RECANATI_4043","PCTO_RECNATI", 4043, new ArrayList<>());
-            Workbook workbook = new XSSFWorkbook(excel);
-            Sheet dataSheet = workbook.getSheetAt(0);
-            Iterator<Row> iterator = dataSheet.rowIterator();
-            iterator.next();
-            while (iterator.hasNext()) {
-                Row row = iterator.next();
-                if (row.getCell(0) != null) {
-                    Scuola scuola = scuolaRepository.getScuolaById(row.getCell(2).getStringCellValue());
-                    // System.out.println(scuola.toString());
-                    String nome = row.getCell(0).getStringCellValue();
-                    String cognome = row.getCell(1).getStringCellValue();
-                    String id = nome + cognome + scuola.getNome();
-                    Studente stud = new Studente(id, nome, cognome, scuola);
-                    System.out.println(stud);
-                    attivita.getStudPartecipanti().add(stud);
-                }
-            }
-            System.out.println(this.save(attivita));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-    }
-
-    @Override
-    public void uploadMontani(MultipartFile file) {
-        Attivita attivita = new Attivita("PCTO_MONTANI_4043","PCTO_MONTANI", 4043, new ArrayList<>());
-        Sheet dataSheet = this.fileOpenerHelper(file);
-        List<String> citta = this.scuolaService.getCitta();
-        Iterator<Row> iterator = dataSheet.rowIterator();
-        while(iterator.hasNext()){
-            Row row = iterator.next();
-            String c = row.getCell(3).getStringCellValue().toUpperCase();
-            String trovata = this.stringFinderHelper.findMostSimilarString(c,citta);
-            List<String> nomi = this.scuolaService.getNomi(trovata);
-            String s =row.getCell(2).getStringCellValue();
-            String sT= this.stringFinderHelper.findMostSimilarString(s,nomi);
-            System.out.println("Data: "+s+" Trovata: "+sT);
-            Scuola scuola = scuolaRepository.getScuolaByCittaAndNome(trovata,sT);
-            String nome = row.getCell(0).getStringCellValue();
-            String cognome = row.getCell(1).getStringCellValue();
-            String id = nome + cognome + scuola.getNome();
-            Studente stud = new Studente(id, nome, cognome, scuola);
-            attivita.getStudPartecipanti().add(stud);
-        }
-        System.out.println(this.save(attivita));
-
-    }
-
-
-    //file PAU 2022-Informatica.xlsx
-    @Override
-    public void uploadOpen(MultipartFile file) {
-        Attivita attivita = new Attivita("PORTO_APERTE_UNICAM_4043","PORTE_APERTE_UNICAM", 4043, new ArrayList<>());
-        Sheet dataSheet = this.fileOpenerHelper(file);
-        Iterator<Row> iterator = dataSheet.rowIterator();
-        iterator.next();
-        while (iterator.hasNext()) {
-            Row row = iterator.next();
-            //System.out.println(row.getCell(3).getStringCellValue());
-            Scuola scuola = scuolaRepository.getScuolaByNome(row.getCell(3).getStringCellValue());
-            String nome = row.getCell(0).getStringCellValue();
-            String cognome = row.getCell(1).getStringCellValue();
-            String id = nome + cognome + scuola.getNome();
-            Studente stud = new Studente(id, nome, cognome, scuola);
-            // System.out.println(stud.toString());
-            attivita.getStudPartecipanti().add(stud);
-
-        }
-        System.out.println(this.save(attivita));
-    }
-
-
-    //file informatica_x_giocoEd3.xlsx
-    @Override
-    public void uploadGioco(MultipartFile file) {
-        System.out.println("Sono nel metodo upload gioco");
-        Attivita attivita = new Attivita("CONTEST_INFORMATICA_X_GIOCO_4043", 4043, "CONTEST_INFORMATICA_X_GIOCO");
-        Sheet dataSheet = this.fileOpenerHelper(file);
-        Iterator<Row> iterator = dataSheet.rowIterator();
-        iterator.next();
-        Scuola s = new Scuola("xxx", "Scuolax", "MARCHE", "FERMO", "PSE", "LICEO");
-        while (iterator.hasNext()) {
-            System.out.println(s);
-            Row r = iterator.next();
-            if (!r.getCell(0).getStringCellValue().isEmpty()) {
-                System.out.println("qua dentro if");
-                int finale = r.getCell(0).getStringCellValue().length();
-                int inizioNome = (r.getCell(0).getStringCellValue().indexOf(':')) + 2;
-                int inizioCognome = (r.getCell(0).getStringCellValue().lastIndexOf(':')) + 2;
-                int fineNome = r.getCell(0).getStringCellValue().indexOf('\n');
-                String nome = r.getCell(0).getStringCellValue().substring(inizioNome, fineNome);
-                String cognome = r.getCell(0).getStringCellValue().substring(inizioCognome, finale);
-                String id = nome + cognome + s.getNome();
-               // Studente stud = new Studente(id, nome, cognome, s);
-                //System.out.println(stud);
-                attivita.getStudPartecipanti().add(new Studente(id, nome, cognome, s));
-                //System.out.println(stud);
-            }
-        }
-
-        System.out.println(this.save(attivita));
-    }
-
-
-
-
-    @Override
-    public void uploadG(MultipartFile file) {
-        Sheet dataSheet = this.fileOpenerHelper(file);
-        Iterator<Row> iterator = dataSheet.rowIterator();
-        iterator.next();
-        while (iterator.hasNext()) {
-            Row r = iterator.next();
-            if (!r.getCell(0).getStringCellValue().equals("Nome e Cognome")) {
-                if (r.getCell(1) != null) {
-                    System.out.println("ciao");
-                }
-            } else {
-                System.out.println("pipi");
-            }
-
-        }
-    }
-
-
-    //file nerd23.xlsx
-    @Override
-    public void uploadNerd(MultipartFile file) {
-        Attivita attivita = new Attivita("PROGETTO_NERD_4045", "PROGETTO_NERD",4045, new ArrayList<>());
-        Sheet dataSheet = this.fileOpenerHelper(file);
-        List<String> citta = this.scuolaService.getCitta();
-        Iterator<Row> iterator = dataSheet.rowIterator();
-        iterator.next();
-        while (iterator.hasNext()) {
-            Row row = iterator.next();
-            if (row.getCell(6)!=null) {
-                String c = row.getCell(6).getStringCellValue().toUpperCase();
-                String trovata = this.stringFinderHelper.findMostSimilarString(c,citta);
-                List<String> nomi = this.scuolaService.getNomi(trovata);
-                String s =row.getCell(4).getStringCellValue();
-                String sT= this.stringFinderHelper.findMostSimilarString(s,nomi);
-                Scuola scuola = scuolaRepository.getScuolaByCittaAndNome(trovata,sT);
-                String nome = row.getCell(1).getStringCellValue();
-                String cognome = row.getCell(2).getStringCellValue();
-                String id = nome + cognome + scuola.getNome();
-                Studente stud = new Studente(id, nome, cognome, scuola);
-                attivita.getStudPartecipanti().add(stud);
-            }
-        }
-        System.out.println(this.save(attivita));
-    }
-
-
-    //file PCTO-Informatica23.xlsx
-    @Override
-    public void uploadOpen23(MultipartFile file) {
-        Attivita attivita = new Attivita("PCTO_IN_PRESENZA_4045","PCTO_IN_PRESENZA", 4045, new ArrayList<>());
-        Sheet dataSheet = this.fileOpenerHelper(file);
-        List<String> citta = this.scuolaService.getCitta();
-        Iterator<Row> iterator = dataSheet.rowIterator();
-        int ncolonna= 0;
-        while (iterator.hasNext()){
-            Row row = iterator.next();
-            String c = row.getCell(3).getStringCellValue().toUpperCase();
-            String trovata = this.stringFinderHelper.findMostSimilarString(c,citta);
-            List<String> nomi = this.scuolaService.getNomi(trovata);
-            String s =row.getCell(2).getStringCellValue();
-            String sT= this.stringFinderHelper.findMostSimilarString(s,nomi);
-            Scuola scuola = scuolaRepository.getScuolaByCittaAndNome(trovata,sT);
-            String nome = row.getCell(1).getStringCellValue();
-            String cognome = row.getCell(0).getStringCellValue();
-            String id = nome + cognome + scuola.getNome();
-            Studente stud = new Studente(id, nome, cognome, scuola);
-            attivita.getStudPartecipanti().add(stud);
-        }
-        System.out.println(this.save(attivita));
-
-    }
-
-
-    //file SummerLab2023.xlsx
-    @Override
-    public void uploadLab(MultipartFile file) {
-        Attivita attivita = new Attivita("SUMMERLAB_4045","SUMMERLAB", 4045, new ArrayList<>());
-        Sheet dataSheet = this.fileOpenerHelper(file);
-        List<String> citta = this.scuolaService.getCitta();
-        Iterator<Row> iterator = dataSheet.rowIterator();
-        int ncolonna= 0;
-        iterator.next();
-        while (iterator.hasNext()){
-            Row row = iterator.next();
-            if (!row.getCell(2).getStringCellValue().isEmpty()){
-                String c = row.getCell(3).getStringCellValue().toUpperCase();
-                String trovata = this.stringFinderHelper.findMostSimilarString(c,citta);
-                List<String> nomi = this.scuolaService.getNomi(trovata);
-                String s =row.getCell(2).getStringCellValue();
-                String sT= this.stringFinderHelper.findMostSimilarString(s,nomi);
-                System.out.println("Data: "+s+" Trovata: "+sT);
-                Scuola scuola = scuolaRepository.getScuolaByCittaAndNome(trovata,sT);
-                String nome = row.getCell(0).getStringCellValue();
-                String cognome = row.getCell(1).getStringCellValue();
-                String id = nome + cognome + scuola.getNome();
-                Studente stud = new Studente(id, nome, cognome, scuola);
-                attivita.getStudPartecipanti().add(stud);
-            }
-        }
-        System.out.println(this.save(attivita));
-    }
-
-
-    //SummerSchoolSTEM2023.xlsx
-    @Override
-    public void uploadStem(MultipartFile file) {
-        Attivita attivita = new Attivita("SUMMER_SCHOOL_STEM_4045","SUMMER_SCHOOL_STEM", 4045, new ArrayList<>());
-        Sheet dataSheet = this.fileOpenerHelper(file);
-        List<String> citta = this.scuolaService.getCitta();
-        Iterator<Row> iterator = dataSheet.rowIterator();
-        int ncolonna= 0;
-        while(iterator.hasNext()){
-            Row row = iterator.next();
-            String c = row.getCell(12).getStringCellValue().toUpperCase();
-            String trovata = this.stringFinderHelper.findMostSimilarString(c,citta);
-            List<String> nomi = this.scuolaService.getNomi(trovata);
-            String s =row.getCell(11).getStringCellValue();
-            String sT= this.stringFinderHelper.findMostSimilarString(s,nomi);
-            System.out.println("Data: "+s+" Trovata: "+sT);
-            Scuola scuola = scuolaRepository.getScuolaByCittaAndNome(trovata,sT);
-            String nome = row.getCell(0).getStringCellValue();
-            String cognome = row.getCell(1).getStringCellValue();
-            String id = nome + cognome + scuola.getNome();
-            Studente stud = new Studente(id, nome, cognome, scuola);
-            attivita.getStudPartecipanti().add(stud);
-        }
-        System.out.println(this.save(attivita));
-    }
-
-
-    //file informaticaopenday13luglio.xlsx
-    @Override
-    public void uploadScuoleA(MultipartFile file) {
-        Attivita attivita = new Attivita("OPEN_DAY_UNICAM_4045","OPEN_DAY_UNICAM", 4045, new ArrayList<>());
-        Sheet dataSheet = this.fileOpenerHelper(file);
-        List<String> citta = this.scuolaService.getCitta();
-        Iterator<Row> iterator = dataSheet.rowIterator();
-        int ncolonna= 0;
-        iterator.next();
-        while (iterator.hasNext()){
-            Row row = iterator.next();
-            if(!row.getCell(15).getStringCellValue().equals("*")){
-                String c = row.getCell(14).getStringCellValue().toUpperCase();
-                String trovata = this.stringFinderHelper.findMostSimilarString(c,citta);
-                List<String> nomi = this.scuolaService.getNomi(trovata);
-                String s =row.getCell(13).getStringCellValue();
-                String sT= this.stringFinderHelper.findMostSimilarString(s,nomi);
-                System.out.println("Data: "+s+" Trovata: "+sT);
-                Scuola scuola = scuolaRepository.getScuolaByCittaAndNome(trovata,sT);
-                String nome = row.getCell(0).getStringCellValue();
-                String cognome = row.getCell(1).getStringCellValue();
-                String id = nome + cognome + scuola.getNome();
-                Studente stud = new Studente(id, nome, cognome, scuola);
-                attivita.getStudPartecipanti().add(stud);
-            }
-        }
-        System.out.println(this.save(attivita));
-    }
-
-
-    //file  informaticalabaperti27luglio.xlsx
-    @Override
-    public void uploadLabOpen(MultipartFile file) {
-        Attivita attivita = new Attivita("LABORATORI_APERTI_UNICAM_4045","LABORATORI_APERTI_UNICAM", 4045, new ArrayList<>());
-        Sheet dataSheet = this.fileOpenerHelper(file);
-        List<String> citta = this.scuolaService.getCitta();
-        Iterator<Row> iterator = dataSheet.rowIterator();
-        int ncolonna= 0;
-        while (iterator.hasNext()){
-            Row row = iterator.next();
-            String c = row.getCell(14).getStringCellValue().toUpperCase();
-            String trovata = this.stringFinderHelper.findMostSimilarString(c,citta);
-            List<String> nomi = this.scuolaService.getNomi(trovata);
-            String s =row.getCell(13).getStringCellValue();
-            String sT= this.stringFinderHelper.findMostSimilarString(s,nomi);
-            System.out.println("Data: "+s+" Trovata: "+sT);
-            Scuola scuola = scuolaRepository.getScuolaByCittaAndNome(trovata,sT);
-            String nome = row.getCell(0).getStringCellValue();
-            String cognome = row.getCell(1).getStringCellValue();
-            String id = nome + cognome + scuola.getNome();
-            Studente stud = new Studente(id, nome, cognome, scuola);
-            attivita.getStudPartecipanti().add(stud);
-        }
-        System.out.println(this.save(attivita));
-    }
-
-    @Override
-    public void uploadGenerico(MultipartFile file, String nome) {
-        Date date =new Date();
-        int mese =date.getMonth();
-        int data = 0;
-        if(mese>=8){
-            data = ((date.getYear()+1900)*2)+1;
-        }else{
-            data = ((date.getYear()+1900)*2)-1;
-        }
-        String nomeAtt = nome+data;
-        Attivita attivita = new Attivita(nomeAtt,nome, data, new ArrayList<>());
-        List<String> citta = this.scuolaService.getCitta();
-        Sheet dataSheet = this.fileOpenerHelper(file);
-        Iterator<Row> iterator = dataSheet.rowIterator();
-        while (iterator.hasNext()){
-            Row row = iterator.next();
-            String c = row.getCell(3).getStringCellValue().toUpperCase();
-            String trovata = this.stringFinderHelper.findMostSimilarString(c,citta);
-            List<String> nomi = this.scuolaService.getNomi(trovata);
-            String s =row.getCell(2).getStringCellValue();
-            String sT= this.stringFinderHelper.findMostSimilarString(s,nomi);
-            Scuola scuola = scuolaRepository.getScuolaByCittaAndNome(trovata,sT);
-            String nom = row.getCell(0).getStringCellValue();
-            String cognome = row.getCell(1).getStringCellValue();
-            String id = nom + cognome + scuola.getNome();
-            Studente stud = new Studente(id, nom, cognome, scuola);
-            attivita.getStudPartecipanti().add(stud);
-        }
-        System.out.println(this.save(attivita));
-    }
-
-
-    // file PAU 2023 - Informatica.xlsx
-    @Override
-    public void uploadPau23(MultipartFile file) {
-        Attivita attivita = new Attivita("PORTE_APERTE_UNICAM_4045","PORTE_APERTE_UNICAM", 4045, new ArrayList<>());
-        Sheet dataSheet = this.fileOpenerHelper(file);
-        List<String> citta = this.scuolaService.getCitta();
-        Iterator<Row> iterator = dataSheet.rowIterator();
-        int ncolonna= 1;
-        iterator.next();
-        while(iterator.hasNext()){
-            Row row = iterator.next();
-            if (row.getCell(0)!=null){
-                System.out.println(ncolonna+" "+row.getCell(8).getStringCellValue());
-                ncolonna++;
-                if(row.getCell(8).getStringCellValue().equals("*")){
-                    System.out.println("ciao");
-                    String c = row.getCell(2).getStringCellValue().toUpperCase();
-                    String trovata = this.stringFinderHelper.findMostSimilarString(c,citta);
-                    List<String> nomi = this.scuolaService.getNomi(trovata);
-                    String s =row.getCell(4).getStringCellValue();
-                    String sT= this.stringFinderHelper.findMostSimilarString(s,nomi);
-                    System.out.println("Data: "+s+" Trovata: "+sT);
-                    Scuola scuola = scuolaRepository.getScuolaByCittaAndNome(trovata,sT);
-                    String nome = row.getCell(0).getStringCellValue();
-                    String cognome = row.getCell(1).getStringCellValue();
-                    String id = nome + cognome + scuola.getNome();
-                    Studente stud = new Studente(id, nome, cognome, scuola);
-                    attivita.getStudPartecipanti().add(stud);
-                }
-            }
-
-        }
-        System.out.println(this.save(attivita));
-    }
-
-    @Override
-    public void uploaedContest23(MultipartFile file) {
-        Attivita attivita = new Attivita("CONTEST_INFORMATICA_X_GIOCO_4045","CONTEST_INFORMATICA_X_GIOCO", 4045, new ArrayList<>());
-        Sheet dataSheet = this.fileOpenerHelper(file);
-        List<String> citta = this.scuolaService.getCitta();
-        Iterator<Row> iterator = dataSheet.rowIterator();
-        int ncolonna= 1;
-        while (iterator.hasNext()){
-            Row row = iterator.next();
-            if(!row.getCell(7).getStringCellValue().equals("*")){
-                String c = row.getCell(7).getStringCellValue().toUpperCase();
-                String trovata = this.stringFinderHelper.findMostSimilarString(c,citta);
-                List<String> nomi = this.scuolaService.getNomi(trovata);
-                String s =row.getCell(6).getStringCellValue();
-                String sT= this.stringFinderHelper.findMostSimilarString(s,nomi);
-                System.out.println("Data: "+s+" Trovata: "+sT);
-                Scuola scuola = scuolaRepository.getScuolaByCittaAndNome(trovata,sT);
-                for (int i =0;i<6;i++){
-                    if (!row.getCell(i).getStringCellValue().isEmpty()){
-                        int fine = row.getCell(i).getStringCellValue().length();
-                        int spazio = row.getCell(i).getStringCellValue().lastIndexOf(" ");
-                        String nome= row.getCell(i).getStringCellValue().substring(1,spazio).toUpperCase();
-                        String cognome= row.getCell(i).getStringCellValue().substring(spazio+1,fine).toUpperCase();
-                        String id = nome + cognome + scuola.getNome();
-                        Studente stud = new Studente(id, nome, cognome, scuola);
-                        System.out.println(stud.toString());
-                        attivita.getStudPartecipanti().add(stud);
-                    }
-                }
-            }
-        }
-        System.out.println(this.save(attivita));
-    }
-
-    @Override
-    public void uploadRecanati23(MultipartFile file) {
-        Attivita attivita = new Attivita("PCTO_RECNATI_4045","PCTO_RECNATI", 4045, new ArrayList<>());
-        Sheet dataSheet = this.fileOpenerHelper(file);
-        List<String> citta = this.scuolaService.getCitta();
-        Iterator<Row> iterator = dataSheet.rowIterator();
-        while (iterator.hasNext()){
-            Row row = iterator.next();
-            String c = row.getCell(3).getStringCellValue().toUpperCase();
-            String trovata = this.stringFinderHelper.findMostSimilarString(c,citta);
-            List<String> nomi = this.scuolaService.getNomi(trovata);
-            String s =row.getCell(2).getStringCellValue();
-            String sT= this.stringFinderHelper.findMostSimilarString(s,nomi);
-            System.out.println("Data: "+s+" Trovata: "+sT);
-            Scuola scuola = scuolaRepository.getScuolaByCittaAndNome(trovata,sT);
-            String nome = row.getCell(0).getStringCellValue();
-            String cognome = row.getCell(1).getStringCellValue();
-            String id = nome + cognome + scuola.getNome();
-            Studente stud = new Studente(id, nome, cognome, scuola);
-            attivita.getStudPartecipanti().add(stud);
-        }
-        System.out.println(this.save(attivita));
-
-    }
-*/
 
     /**
      * Find information about students that chose UNICAM and their high school, given an activity.
@@ -726,6 +225,135 @@ System.out.println(attivita.getNome());
         List<Attivita> a = this.getAttivita(4045);
         System.out.println(a.size());
     }
+
+    @Override
+    public void uploadSingleActivity(String nome, String tipo, String scuola, int anno, Sede sede, LocalDateTime dataInizio, LocalDateTime dataFine, String descrizione, List<ProfessoreUnicam> prof, Professore profReferente, MultipartFile file) {
+        Sheet dataSheet = this.fileOpenerHelper(file);
+        Iterator<Row> iterator = dataSheet.rowIterator();
+        iterator.next();
+        Scuola scuolaP=scuolaRepository.getScuolaByNome(scuola);
+        List<Studente> studPartecipanti=new ArrayList<>();
+
+        while(iterator.hasNext()){
+            Row row = iterator.next();
+            String nomeStud = row.getCell(0).getStringCellValue();
+            String cognome = row.getCell(1).getStringCellValue();
+            String email=row.getCell(2).getStringCellValue();
+            Studente stud = new Studente(nomeStud, cognome,email,scuolaP);
+
+          studPartecipanti.add(stud);
+            if(studenteRepository.findByEmail(stud.getEmail())==null) {
+                studenteRepository.save(stud);
+            }
+        }
+
+        if(attivitaRepository.findByNomeAndAnno(nome,anno)==null){
+            Attivita attivita=new Attivita(nome,tipo,anno,studPartecipanti,sede,dataInizio,dataFine,descrizione,prof,profReferente,false);
+            attivita.setScuola(scuola);
+            attivitaRepository.save(attivita);
+            createRisulataiAtt(attivita);
+            attivita.setScuola(scuola);
+            System.out.println(scuolaP.getIdScuola());
+
+            if(!scuola.isEmpty()) {
+                attivita.setScuola(scuola);
+                createRisultati(attivita);
+            }
+        }
+
+    }
+
+    /**
+     * metodo che da un attività crea la vista sulle scuola
+     * @param attivita
+     */
+    private void createRisultati(Attivita attivita){
+        Presenza presenza=createPresenza(attivita);
+
+        List<Risultati> risultati=risultatiRepository.findAll();
+
+
+
+        //se l'attività ha una scuola in cui si è svolta
+        if(!attivita.getScuola().equals("")){
+            Scuola scuola=scuolaRepository.getScuolaByNome(attivita.getScuola());
+            Query query = new Query();
+            query.addCriteria(Criteria.where("scuola").is(scuola));
+            Scuola scuola1=null;
+            for(int i=0;i< risultati.size();i++){
+                if(risultati.get(i).getScuola().getIdScuola().equals(scuola.getIdScuola())&&
+                        risultati.get(i).getAnnoAcc()==attivita.getAnnoAcc()){
+                    scuola1=scuola;
+                }
+            }
+
+            //se la scuola non ha altre attività fatte creao un nuovo risultati
+            if(scuola1==null) {
+                Risultati risultato = new Risultati(attivita.getAnnoAcc(), scuola);
+                risultato.addAttivita(presenza);
+                risultato.addIscritti(presenza.getIscritti());
+                risultatiRepository.save(risultato);
+                System.out.println(risultatiRepository.findAll().size());
+            }
+            else{
+                List<Universitario> universitario=risultatiRepository.findByScuolaId(scuola.getIdScuola()).get(0).getIscritti();
+                List<Presenza> presenze=risultatiRepository.findByScuolaId(scuola.getIdScuola()).get(0).getAttivita();
+                universitario.addAll(presenza.getIscritti());
+                presenze.add(presenza);
+                Query query1 = new Query();
+                query1.addCriteria(Criteria.where("scuola").is(scuola));
+                Update update = new Update();
+                update.set("attivita", presenze);
+                update.set("iscritti",universitario);
+                mongoTemplate.updateFirst(query1, update, Risultati.class);
+            }
+        }
+    }
+
+    /**
+     * metodo che crea la presenza
+     * @param attivita
+     */
+    private Presenza createPresenza(Attivita attivita) {
+        List<Universitario> universitari=risultatiAttRepository.findbyNomeAttivita(attivita.getNome()).get(0).getUniversitarii();
+        Presenza presenza=new Presenza(attivita.getNome());
+        presenza.addPartecipanti(attivita.getStudPartecipanti());
+        presenza.addIscritti(universitari);
+        return presenza;
+
+
+    }
+
+
+    /**
+     * metodo che crea la vista dei risultati di quella attività va a vedere gli studenti che sono diventati universitari
+     * @param attivita
+     */
+    private void  createRisulataiAtt(Attivita attivita){
+        RisultatiAtt risultatiAtt=new RisultatiAtt();
+        risultatiAtt.setAnnoAcc(attivita.getAnnoAcc());
+        risultatiAtt.setAttivita(attivita.getNome());
+        List<Universitario> universitarioList=new ArrayList<>();
+        for(int i=0;i<attivita.getStudPartecipanti().size();i++){
+            Studente stud=attivita.getStudPartecipanti().get(i);
+            Universitario universitario=universitarioRepository.findByNomeAndCognome(stud.getNome(),stud.getCognome());
+            if(universitario!=null){
+                risultatiAtt.addUniversitari(universitario);
+            }
+        }
+        risultatiAttRepository.save(risultatiAtt);
+    }
+
+
+
+
+
+
+
+
+
+
+
 
     private Scuola findScuola(String citta, String scuola){
         List<Scuola> scuole = scuolaRepository.getScuolaByCitta(citta);

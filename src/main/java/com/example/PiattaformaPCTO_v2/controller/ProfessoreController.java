@@ -99,6 +99,7 @@ Professore profReferente=professoreService.getProfByString(create.getProfReferen
 
     @GetMapping("/get")
     public ResponseEntity<List<Professore>> getProf() {
+
         List<Professore> p = this.professoreService.getAllProf();
         return new ResponseEntity<>(p, HttpStatus.OK);
     }
@@ -115,7 +116,8 @@ Professore profReferente=professoreService.getProfByString(create.getProfReferen
 
     @PostMapping("/uploadSingleProf")
     public void uploadSingleProf(@RequestBody UploadProfRequest prof ){
-        professoreService.uploadSingleProf(prof.getEmail(),prof.getNome(),prof.getCognome(),prof.getScuolaImp(),prof.getAttivita());
+
+        professoreService.uploadSingleProf(prof.getNome(),prof.getCognome(),prof.getEmail(),prof.getScuola(),prof.getCitta(),prof.getAttivita());
     }
 
 }

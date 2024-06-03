@@ -113,27 +113,47 @@ if(attivitaRepository.findByNomeAnno(nome,anno).isEmpty()) {
     private void createRisultati(Attivita attivita){
         Presenza presenza=createPresenza(attivita);
 
+        List<Risultati> risultati=risultatiRepository.findAll();
+
+
+
+
+
         //se l'attività ha una scuola in cui si è svolta
         if(!attivita.getScuola().equals("")){
             Scuola scuola=scuolaRepository.getScuolaByNome(attivita.getScuola());
             Query query = new Query();
             query.addCriteria(Criteria.where("scuola").is(scuola));
-            //se la scuola non ha altre attività fatte creao un nuovo risultati
-            if(query.toString().equals("")) {
-                Risultati risultato = new Risultati(attivita.getAnnoAcc(), scuola);
-                risultato.addAttivita(presenza);
-                risultatiRepository.save(risultato);
-                System.out.println(risultatiRepository.findAll().size());
+            Scuola scuola1=null;
+            for(int i=0;i< risultati.size();i++){
+                if(risultati.get(i).getScuola().getIdScuola().equals(scuola.getIdScuola())&&
+                        risultati.get(i).getAnnoAcc()==attivita.getAnnoAcc()){
+                    scuola1=scuola;
+                }
             }
-            else{
-                List<Presenza> presenze=risultatiRepository.findByScuolaId(scuola.getIdScuola()).get(0).getAttivita();
-                presenze.add(presenza);
-                Query query1 = new Query();
-                query1.addCriteria(Criteria.where("scuola").is(scuola));
-                Update update = new Update();
-                update.set("attivita", presenze);
-                mongoTemplate.updateFirst(query1, update, Risultati.class);
-            }
+                //se la scuola non ha altre attività fatte creao un nuovo risultati
+                if(scuola1==null) {
+                    Risultati risultato = new Risultati(attivita.getAnnoAcc(), scuola);
+                    risultato.addAttivita(presenza);
+                    risultato.addIscritti(presenza.getIscritti());
+                    risultatiRepository.save(risultato);
+                    System.out.println(risultatiRepository.findAll().size());
+                }
+                else{
+                    List<Presenza> presenze=risultatiRepository.findByScuolaId(scuola.getIdScuola()).get(0).getAttivita();
+                    List<Universitario> universitario=risultatiRepository.findByScuolaId(scuola.getIdScuola()).get(0).getIscritti();
+                    universitario.addAll(presenza.getIscritti());
+                    presenze.add(presenza);
+                    Query query1 = new Query();
+                    query1.addCriteria(Criteria.where("scuola").is(scuola));
+                    Update update = new Update();
+                    update.set("attivita", presenze);
+                    update.set("iscritti",universitario);
+                    mongoTemplate.updateFirst(query1, update, Risultati.class);
+                }
+
+
+
         }
     }
 
@@ -142,6 +162,7 @@ if(attivitaRepository.findByNomeAnno(nome,anno).isEmpty()) {
      * @param attivita
      */
     private Presenza createPresenza(Attivita attivita) {
+
       List<Universitario> universitari=risultatiAttRepository.findbyNomeAttivita(attivita.getNome()).get(0).getUniversitarii();
       Presenza presenza=new Presenza(attivita.getNome());
       presenza.addPartecipanti(attivita.getStudPartecipanti());
@@ -307,10 +328,11 @@ risultatiAttRepository.save(risultatiAtt);
     }
 
     @Override
-    public void uploadSingleProf(String email, String nome, String cognome, Scuola scuola, String attività) {
+    public void uploadSingleProf( String nome, String cognome,String email, String scuola,String cittaScuola, String attività) {
+Scuola scuola1=scuolaRepository.getScuolaByCittaAndNome(cittaScuola.toUpperCase(),scuola);
 
-        if(professoreRepository.getProfByEmail(email)==null&&scuolaRepository.getScuolaById(scuola.getIdScuola())!=null){
-            professoreRepository.save(new Professore(nome,cognome,email,scuola,attività));
+        if(professoreRepository.getProfByEmail(email)==null&&scuola!=null){
+            professoreRepository.save(new Professore(nome,cognome,email,scuola1,attività));
         }
     }
 

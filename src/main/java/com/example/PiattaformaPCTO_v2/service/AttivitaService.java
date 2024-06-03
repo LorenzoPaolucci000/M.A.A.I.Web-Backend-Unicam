@@ -1,10 +1,14 @@
 package com.example.PiattaformaPCTO_v2.service;
 
 import com.example.PiattaformaPCTO_v2.collection.Attivita;
+import com.example.PiattaformaPCTO_v2.collection.Professore;
+import com.example.PiattaformaPCTO_v2.collection.ProfessoreUnicam;
 import com.example.PiattaformaPCTO_v2.dto.ActivityViewDTOPair;
+import com.example.PiattaformaPCTO_v2.enumeration.Sede;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface AttivitaService {
@@ -75,5 +79,19 @@ Sheet fileOpenerHelper(MultipartFile file);
 
     void prova();
 
-
+    /**
+     * metodo che crea l'attività singola nel file c'è la lista degli studenti iscritti
+     * @param nome
+     * @param tipo
+     * @param scuola
+     * @param anno
+     * @param sede
+     * @param dataInizio
+     * @param dataFine
+     * @param descrizione
+     * @param prof
+     * @param profReferente
+     * @param file
+     */
+    void uploadSingleActivity(String nome, String tipo, String scuola, int anno, Sede sede, LocalDateTime dataInizio, LocalDateTime dataFine, String descrizione, List<ProfessoreUnicam> prof, Professore profReferente, MultipartFile file);
 }
