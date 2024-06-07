@@ -20,6 +20,8 @@ public class RisultatiAtt {
 
     private String attivita;
 
+    private String tipo;
+
     private int annoAcc;
 
 
@@ -55,5 +57,13 @@ public class RisultatiAtt {
 
     public void setAnnoAcc(int annoAcc) {
         this.annoAcc = annoAcc;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
 }

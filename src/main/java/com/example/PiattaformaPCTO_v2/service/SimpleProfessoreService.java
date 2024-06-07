@@ -94,8 +94,10 @@ if(attivitaRepository.findByNomeAnno(nome,anno).isEmpty()) {
 
     @Override
     public void uploadActivityDefinitively(String nome) throws IOException {
-        int anno =Integer.parseInt(nome.substring(nome.indexOf(" ")+1,nome.length()));
-        String nomeA=nome.substring(0,nome.indexOf(" "));
+
+        int anno =Integer.parseInt(nome.substring(nome.lastIndexOf(" ")+1,nome.length()));
+        String nomeA=nome.substring(0,nome.lastIndexOf(" "));
+
         Attivita attivita=attivitaRepository.findByNomeAndAnno(nomeA,anno);
         Query query = new Query();
         query.addCriteria(Criteria.where("nome").is(nomeA).and("annoAcc").is(anno));
@@ -165,6 +167,7 @@ if(attivitaRepository.findByNomeAnno(nome,anno).isEmpty()) {
 
       List<Universitario> universitari=risultatiAttRepository.findbyNomeAttivita(attivita.getNome()).get(0).getUniversitarii();
       Presenza presenza=new Presenza(attivita.getNome());
+      presenza.setTipo(attivita.getTipo());
       presenza.addPartecipanti(attivita.getStudPartecipanti());
       presenza.addIscritti(universitari);
       return presenza;
@@ -181,6 +184,7 @@ if(attivitaRepository.findByNomeAnno(nome,anno).isEmpty()) {
         RisultatiAtt risultatiAtt=new RisultatiAtt();
         risultatiAtt.setAnnoAcc(attivita.getAnnoAcc());
         risultatiAtt.setAttivita(attivita.getNome());
+        risultatiAtt.setTipo(attivita.getTipo());
         List<Universitario> universitarioList=new ArrayList<>();
 for(int i=0;i<attivita.getStudPartecipanti().size();i++){
     Studente stud=attivita.getStudPartecipanti().get(i);

@@ -12,6 +12,8 @@ public class Presenza {
 
     private String nomeAttivita;
 
+    private String tipo;
+
     private List<Studente> partecipanti;
 
     private List<Universitario> iscritti;
@@ -41,5 +43,14 @@ public void addPartecipanti(List<Studente> studenti){
 
     public List<Universitario> getIscritti() {
         return iscritti;
+    }
+
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
 }

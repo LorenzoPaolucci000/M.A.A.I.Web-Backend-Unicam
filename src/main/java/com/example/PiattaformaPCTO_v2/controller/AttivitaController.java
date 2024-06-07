@@ -49,8 +49,8 @@ public class AttivitaController {
     @PostMapping("/uploadConAnno1/{param}")
     public void uploadConAnno1( @PathVariable ("param" ) String create,
                                 @RequestParam("file") MultipartFile file){
-        String nome=create.substring(0,create.indexOf(" "));
-        create=create.substring(create.indexOf(" ")+1);
+        String nome=create.substring(0,create.indexOf("&"));
+        create=create.substring(create.indexOf("&")+1);
         String tipo=create.substring(0,create.indexOf(" "));
         create=create.substring(create.indexOf(" ")+1);
         String s=create.substring(0,create.indexOf("-"));

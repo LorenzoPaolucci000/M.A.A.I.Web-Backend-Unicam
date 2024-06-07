@@ -228,6 +228,7 @@ System.out.println(attivita.getNome());
 
     @Override
     public void uploadSingleActivity(String nome, String tipo, String scuola, int anno, Sede sede, LocalDateTime dataInizio, LocalDateTime dataFine, String descrizione, List<ProfessoreUnicam> prof, Professore profReferente, MultipartFile file) {
+       System.out.println(scuola);
         Sheet dataSheet = this.fileOpenerHelper(file);
         Iterator<Row> iterator = dataSheet.rowIterator();
         iterator.next();
@@ -317,6 +318,7 @@ System.out.println(attivita.getNome());
     private Presenza createPresenza(Attivita attivita) {
         List<Universitario> universitari=risultatiAttRepository.findbyNomeAttivita(attivita.getNome()).get(0).getUniversitarii();
         Presenza presenza=new Presenza(attivita.getNome());
+        presenza.setTipo(attivita.getTipo());
         presenza.addPartecipanti(attivita.getStudPartecipanti());
         presenza.addIscritti(universitari);
         return presenza;
@@ -333,6 +335,7 @@ System.out.println(attivita.getNome());
         RisultatiAtt risultatiAtt=new RisultatiAtt();
         risultatiAtt.setAnnoAcc(attivita.getAnnoAcc());
         risultatiAtt.setAttivita(attivita.getNome());
+        risultatiAtt.setTipo(attivita.getTipo());
         List<Universitario> universitarioList=new ArrayList<>();
         for(int i=0;i<attivita.getStudPartecipanti().size();i++){
             Studente stud=attivita.getStudPartecipanti().get(i);
