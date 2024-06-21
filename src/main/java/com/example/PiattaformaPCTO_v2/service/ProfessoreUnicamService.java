@@ -37,7 +37,7 @@ public interface ProfessoreUnicamService {
 
     List<ProfessoreUnicam> getProfByString(List<String> prof);
     /**
-     * metodo che scarica un file excel in cui mette tutti i prof presenti
+     * metodo che carica in un file excel tutti i prof presenti
      */
     void downloadAllProfOnFile(String filename);
 

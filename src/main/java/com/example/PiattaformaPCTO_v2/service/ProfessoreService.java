@@ -49,7 +49,7 @@ public interface ProfessoreService {
     void uploadConFile(MultipartFile file);
 
     /**
-     * metodo che ritorna tutti i nomi dei file nel package activity
+     * metodo che ritorna tutti i nomi delle attività a cui è ancora possibile iscriversi
      * @return
      */
     List<String> getAllPendingActivities();
