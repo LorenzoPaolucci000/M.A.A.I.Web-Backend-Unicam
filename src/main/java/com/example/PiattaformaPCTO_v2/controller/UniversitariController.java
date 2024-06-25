@@ -36,7 +36,7 @@ public class UniversitariController {
     @PostMapping("/uploadConAnno1/{anno}")
     public void uploadConAnno1(@RequestParam("file") MultipartFile file,@PathVariable("anno")String anno){
 
-        int anno1=Integer.parseInt(anno.substring(0,4));
+        int anno1=Integer.parseInt(anno.substring(0,8));
         universitarioService.uploadConAnno(file,anno1);
     }
 

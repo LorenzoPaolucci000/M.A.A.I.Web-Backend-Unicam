@@ -205,6 +205,7 @@ risultatiAttRepository.save(risultatiAtt);
 
         while (iterator.hasNext()){
             Row row = iterator.next();
+            if(row.getCell(0)==null)break;
             String nome=row.getCell(0).getStringCellValue();
             String cognome=row.getCell(1).getStringCellValue();
             String attivita=row.getCell(2).getStringCellValue();

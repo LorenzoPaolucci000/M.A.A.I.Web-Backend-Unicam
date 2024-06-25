@@ -22,6 +22,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -54,6 +55,8 @@ public class SimpleAttivitaService implements AttivitaService {
     private RisultatiAttRepository risultatiAttRepository;
     @Autowired
     private RisultatiRepository risultatiRepository;
+
+
     @Override
     public String save(Attivita attivita) {
         return attivitaRepository.save(attivita).getNome();
@@ -263,6 +266,7 @@ System.out.println(attivita.getNome());
         }
 
     }
+
 
     /**
      * metodo che da un attività crea la vista sulle scuola

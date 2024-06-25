@@ -101,7 +101,7 @@ public class AttivitaController {
 
 String referente=create.substring(1,create.indexOf("-"));
 
-        create=create.substring(create.indexOf("4"));
+        create=create.substring(create.indexOf("2"));
 
 int anno=Integer.parseInt(create);
 Sede sedeA=Sede.Online;

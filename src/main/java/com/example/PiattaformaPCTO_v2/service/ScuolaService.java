@@ -22,7 +22,7 @@ public interface ScuolaService {
 
     List<String> getNomi(String c);
 /**
- * metodo che carica in un file tutte le scuole
+ * metodo che carica in un file tutte le scuole in cui ci sono state delle attività
  */
 void downloadAllSchhool(String nome,int anno);
     /**
