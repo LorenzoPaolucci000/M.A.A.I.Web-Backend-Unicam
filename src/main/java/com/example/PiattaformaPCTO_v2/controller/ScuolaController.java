@@ -41,8 +41,7 @@ public class ScuolaController {
     }
 
 
-    @GetMapping("/stampa")
-    public void stampa(){scuolaService.stampa();}
+
 
     /**
      * chiamato al metodo che invoca il download delle scuole in formatao excel

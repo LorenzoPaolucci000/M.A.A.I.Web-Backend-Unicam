@@ -138,7 +138,7 @@ return mapping;
     @Override
     public String upload(MultipartFile file) {
         LocalDate date = LocalDate.now();
-        System.out.println(file.getOriginalFilename());
+
         Immatricolazioni i = new Immatricolazioni((date.getYear()*2)+1);
         Sheet dataSheet = this.fileOpenerHelper(file);
         Iterator<Row> iterator = dataSheet.rowIterator();
@@ -154,9 +154,9 @@ return mapping;
                 String scuola = row.getCell(4).getStringCellValue();
                 String corso = row.getCell(0).getStringCellValue();
                 Universitario universitario = new Universitario(m,nome,cognome,4047,corso,comune,scuola);
-                //System.out.println(universitario.toString());
+
                 i.addUniversitario(universitario);
-                System.out.println(universitario.toString());
+
             }
         }
 

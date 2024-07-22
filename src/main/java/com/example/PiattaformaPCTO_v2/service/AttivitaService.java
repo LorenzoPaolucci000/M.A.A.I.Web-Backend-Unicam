@@ -15,13 +15,7 @@ public interface AttivitaService {
 
     String save(Attivita attivita);
 
-    /**
-     * metodo che aggiunge l'attività con nome e anno
-     * @param file su cui inserire gli studenti partecipanti
-     * @param anno in cui si svolge l'attività
-     * @param nome nome dell'attività
-     */
-    void uploadConAnno(MultipartFile file,int anno,String nome);
+
 
 Sheet fileOpenerHelper(MultipartFile file);
 
@@ -36,7 +30,6 @@ Sheet fileOpenerHelper(MultipartFile file);
     List<Attivita> getAttivita(int anno);
 
 
-    void prova();
 
     /**
      * metodo che crea l'attività singola

@@ -62,7 +62,7 @@ public class SimpleProfessoreService implements ProfessoreService{
         message+="<tr><th>Nome</th><th>Cognome</th><th>Email</th><th>Attivita</th><th>Scuola</th><th>Citta</th><th>Regione</th></tr>";
         for (Professore prof:profs) {
             Scuola scuola = scuolaRepository.getScuolaById(prof.getScuolaImp().getIdScuola());
-            System.out.println(scuola.getNome());
+
             message += "<tr><th>"+prof.getNome()+"</th><th>"+prof.getCognome()+"</th><th>"+prof.getEmail()+"</th><th>"+prof.getAttivita()+"</th><th>"+scuola.getNome()+"</th><th>"+scuola.getCitta()+"</th><th>"+scuola.getRegione()+"</th></tr>";
         }
         message+="</table>";
@@ -139,7 +139,7 @@ if(attivitaRepository.findByNomeAnno(nome,anno).isEmpty()) {
                     risultato.addAttivita(presenza);
                     risultato.addIscritti(presenza.getIscritti());
                     risultatiRepository.save(risultato);
-                    System.out.println(risultatiRepository.findAll().size());
+
                 }
                 else{
                     List<Presenza> presenze=risultatiRepository.findByScuolaId(scuola.getIdScuola()).get(0).getAttivita();
@@ -285,7 +285,7 @@ risultatiAttRepository.save(risultatiAtt);
 
         try (FileOutputStream outputStream = new FileOutputStream(filename)) {
             workbook.write(outputStream);
-            System.out.println("File Excel creato con successo!");
+
         } catch (IOException e) {
             System.err.println("Errore durante la creazione del file Excel: " + e.getMessage());
         } finally {

@@ -73,7 +73,7 @@ public class SimpleRisultatiService implements RisultatiService {
 
     @Override
     public List<RisultatiAtt> getRisultatiAtt() {
-       // System.out.println(this.risultatiAttRepository.findAll().size());
+
 
         return this.risultatiAttRepository.findAll();
     }
@@ -306,7 +306,7 @@ public class SimpleRisultatiService implements RisultatiService {
     private int attivitaHelper(List<Presenza> pres, String nome) {
         for (int i = 0; i < pres.size(); i++) {
             if (Objects.equals(pres.get(i).getNomeAttivita(), nome)) {
-                // System.out.println("sta qua"+i);
+                
                 return i;
             }
         }

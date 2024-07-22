@@ -43,11 +43,10 @@ public class AttivitaController {
     }
 
 
-    @RequestMapping(value = "/uploadConAnno", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void uploadConAnno(@RequestParam("file") MultipartFile file,@RequestParam("anno") int anno,@RequestParam("nome")String nome){attivitaService.uploadConAnno(file,anno,nome);}
+
 
     @PostMapping("/uploadConAnno1/{param}")
-    public void uploadConAnno1( @PathVariable ("param" ) String create,
+    public void uploadActivity( @PathVariable ("param" ) String create,
                                 @RequestParam("file") MultipartFile file){
         String nome=create.substring(0,create.indexOf("&"));
         create=create.substring(create.indexOf("&")+1);
@@ -146,8 +145,7 @@ Sede sedeA=Sede.Online;
     }
 
 
-    @GetMapping("/prova")
-    void prova(){attivitaService.prova();}
+
 
 
 }

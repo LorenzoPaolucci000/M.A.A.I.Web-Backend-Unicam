@@ -13,7 +13,6 @@ public interface ScuolaService {
 
     String upload();
 
-    void stampa();
 
     List<Scuola> getScuole();
 

@@ -62,110 +62,11 @@ public class SimpleAttivitaService implements AttivitaService {
         return attivitaRepository.save(attivita).getNome();
     }
 
-    public void uploadConAnno(MultipartFile file,int anno,String name){
-
-
-        List<Attivita> att=attivitaRepository.findByNomeAnno(name+anno,anno);
-        Attivita attivita = new Attivita(name+anno,name, anno, new ArrayList<>());
-        Sheet dataSheet = this.fileOpenerHelper(file);
-        List<String> citta = this.scuolaService.getCitta();
-        Iterator<Row> iterator = dataSheet.rowIterator();
-         iterator.next();
-        while(iterator.hasNext()){
-            Row row = iterator.next();
-            String c = row.getCell(3).getStringCellValue().toUpperCase();
-            String trovata = this.stringFinderHelper.findMostSimilarString(c,citta);
-            List<String> nomi = this.scuolaService.getNomi(trovata);
-            String s =row.getCell(2).getStringCellValue();
-            String sT= this.stringFinderHelper.findMostSimilarString(s,nomi);
-            System.out.println("Data: "+s+" Trovata: "+sT);
-            Scuola scuola = scuolaRepository.getScuolaByCittaAndNome(trovata,sT);
-            String nome = row.getCell(0).getStringCellValue();
-            String cognome = row.getCell(1).getStringCellValue();
-            String email="ciao";
-
-            Studente stud = new Studente(nome, cognome,email,scuola);
-            attivita.getStudPartecipanti().add(stud);
-            studenteRepository.save(stud);//aggiunto
-
-        }
-
-        if(!att.isEmpty()) {
-            this.addElement(attivita, att.get(0));
-            this.updateRisulAtt(attivita,anno);
-        }
-        else {
-            System.out.println(this.save(attivita));
-            this.createRisulAtt(attivita,anno);
-        }
-    }
-
-    private void updateRisulAtt(Attivita attivita, int anno) {
-        List<RisultatiAtt> risatt=risAttRepository.findByNomeAndAnno(attivita.getNome(),anno);
-System.out.println(attivita.getNome());
-        List<RisultatiAtt> elencoris=risAttRepository.findAll();
-        elencoris.remove(risatt.get(0));
-       risAttRepository.deleteAll();
-    risatt.get(0).addUniversitari(this.checkUniversitario(attivita.getStudPartecipanti(),anno));
-    elencoris.add(risatt.get(0));
-    this.risAttRepository.saveAll(elencoris);
-
-    }
-
-    /**
-     * metodo che crea il risultato att
-     * @param attivita
-     */
-    private void createRisulAtt(Attivita attivita,int anno){
-
-        RisultatiAtt risultatiAtt=new RisultatiAtt();
-        risultatiAtt.setAttivita(attivita.getNome());
-        risultatiAtt.setAnnoAcc(attivita.getAnnoAcc());
-        risultatiAtt.addUniversitari(this.checkUniversitario(attivita.getStudPartecipanti(),anno));
-        this.risAttRepository.save(risultatiAtt);
-    }
-
-
-    /**
-     *
-     * metodo che data una lista di studenti partecipanti a quell'attività ritorna la lista degli studenti che sono
-     * diventati studenti universitari
-     * @param stud
-     * @return
-     */
-
-    private List<Universitario> checkUniversitario(List<Studente> stud,int anno) {
-        List<Universitario> universitari=new ArrayList<>();
-
-//Query query=new Query();
-//query.addCriteria(Criteria.where("universitari.nome").is("ALBERTO").and("universitari.cognome").is("POL"));
-//System.out.println( mongoTemplate.find(query, Iscrizione.class));
-    for(int i=0;i<stud.size();i++){
-
-        universitari.add(universitarioRepository.findByNomeAndCognome(stud.get(i).getNome(),stud.get(i).getCognome()));
-    }
 
 
 
-        return universitari;
-    }
 
-    /**
-     *  metodo che aggiunge gli elementi inseriti nell'attività presente
-     * @param a1
-     * @param a2
-     */
 
-    private void addElement(Attivita a1,Attivita a2){
-        List<Attivita> attivitaList=attivitaRepository.findAll();
-        attivitaList.remove(a2);
-        this.attivitaRepository.deleteAll();
-        for(int i=0;i<a1.getStudPartecipanti().size();i++){
-            a2.getStudPartecipanti().add(a1.getStudPartecipanti().get(i));
-        }
-        attivitaList.add(a2);
-        this.attivitaRepository.saveAll(attivitaList);
-    }
 
 
 
@@ -180,13 +81,12 @@ System.out.println(attivita.getNome());
     public List<ActivityViewDTOPair> findStudentsFromActivity(String activityName) {
         List<ActivityViewDTOPair> result = new ArrayList<>();
         Attivita activity = this.attivitaRepository.findByNome(activityName);
-        System.out.println(activity.getNome());
-        System.out.println("prova");
+
         if(activity.getNome().equals("CONTEST_INFORMATICA_X_GIOCO_4043")){
-            System.out.println("qua");
+
             activity.getStudPartecipanti().forEach(s -> {
                 List<Immatricolazioni> i = this.universitarioService.getIscrizioniAnno(4047);
-                System.out.println(i.size());
+
                 for (Universitario un : i.get(0).getUniversitari()){
                     if(un.getNome().equals(s.getNome().toUpperCase())){
                         if (un.getCognome().equals(s.getCognome().toUpperCase())){
@@ -223,15 +123,11 @@ System.out.println(attivita.getNome());
         return mongoTemplate.find(query,Attivita.class);
     }
 
-    @Override
-    public void prova() {
-        List<Attivita> a = this.getAttivita(4045);
-        System.out.println(a.size());
-    }
+
 
     @Override
     public void uploadSingleActivity(String nome, String tipo, String scuola, int anno, Sede sede, LocalDateTime dataInizio, LocalDateTime dataFine, String descrizione, List<ProfessoreUnicam> prof, Professore profReferente, MultipartFile file) {
-       System.out.println(scuola);
+
         Sheet dataSheet = this.fileOpenerHelper(file);
         Iterator<Row> iterator = dataSheet.rowIterator();
         iterator.next();
@@ -257,7 +153,7 @@ System.out.println(attivita.getNome());
             attivitaRepository.save(attivita);
             createRisulataiAtt(attivita);
             attivita.setScuola(scuola);
-            System.out.println(scuolaP.getIdScuola());
+
 
             if(!scuola.isEmpty()) {
                 attivita.setScuola(scuola);
@@ -298,7 +194,7 @@ System.out.println(attivita.getNome());
                 risultato.addAttivita(presenza);
                 risultato.addIscritti(presenza.getIscritti());
                 risultatiRepository.save(risultato);
-                System.out.println(risultatiRepository.findAll().size());
+
             }
             else{
                 List<Universitario> universitario=risultatiRepository.findByScuolaId(scuola.getIdScuola()).get(0).getIscritti();

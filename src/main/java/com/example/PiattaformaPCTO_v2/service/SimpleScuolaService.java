@@ -41,7 +41,7 @@ public class SimpleScuolaService implements ScuolaService{
         String filePath="src/main/resources/scuole-statali.xlsx";
         try {
             FileInputStream excel = new FileInputStream(new File(filePath));
-            System.out.println(filePath);
+
             Workbook workbook = new XSSFWorkbook(excel);
             Sheet dataSheet = workbook.getSheetAt(0);
             Iterator<Row> iterator = dataSheet.rowIterator();
@@ -72,13 +72,7 @@ public class SimpleScuolaService implements ScuolaService{
         return null;
     }
 
-    @Override
-    public void stampa() {
-        Scuola scuola = scuolaRepository.getScuolaByNomeContainingAndAndCitta("RICCI","FERMO");
-        String s= scuola.getNome();
 
-        System.out.println(s.replace('"','$'));
-    }
 
     @Override
     public List<Scuola> getScuole() {
