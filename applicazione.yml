@@ -1,11 +1,19 @@
 # Spring properties
+#spring:
+#  application:
+#    name: car-service
+#  data:
+#    mongodb.host: 127.0.0.1
+#    mongodb.port: 27017
+#    mongodb.uri: 127.0.0.1/pcto
+#    mongo.repositories.enabled: true
 spring:
   application:
     name: car-service
   data:
-    mongodb.host: 127.0.0.1
-    mongodb.port: 27017
-    mongodb.uri: 127.0.0.1/pcto
-    mongo.repositories.enabled: true
-
+    mongodb:
+      uri: mongodb+srv://lorenzopaolucci:pcto-project@cluster0.dfni7.mongodb.net/pcto?retryWrites=true&w=majority
+    mongo:
+      repositories:
+        enabled: true
 

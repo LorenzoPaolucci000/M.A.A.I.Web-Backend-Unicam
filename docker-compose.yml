@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      SPRING_DATA_MONGODB_URI: mongodb://host.docker.internal:27017/pcto
+      SPRING_DATA_MONGODB_URI: mongodb+srv://lorenzopaolucci:pcto-project@cluster0.dfni7.mongodb.net/pcto?retryWrites=true&w=majority
     ports:
       - "8080:8080"
     networks:
